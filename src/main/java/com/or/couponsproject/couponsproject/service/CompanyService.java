@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,12 +44,8 @@ public class CompanyService {
         }
 
         //Checking if the date format is valid according to Date REGEX
-        if (!InputUserValidation.isDateValid((couponDto.getStartDate()))) {
-            throw new UserValidationException(Constraint.INVALID_INPUT_FORMAT);
-        }
-
-        //Checking if the date format is valid according to Date REGEX
-        if (!InputUserValidation.isDateValid((couponDto.getEndDate()))) {
+        if (!InputUserValidation.isDateValid((couponDto.getStartDate()))
+            || !InputUserValidation.isDateValid((couponDto.getEndDate()))) {
             throw new UserValidationException(Constraint.INVALID_INPUT_FORMAT);
         }
 
@@ -99,12 +96,8 @@ public class CompanyService {
         }
 
         //Checking if the date format is valid according to Date REGEX
-        if (!InputUserValidation.isDateValid((couponDto.getStartDate()))) {
-            throw new UserValidationException(Constraint.INVALID_INPUT_FORMAT);
-        }
-
-        //Checking if the date format is valid according to Date REGEX
-        if (!InputUserValidation.isDateValid((couponDto.getEndDate()))) {
+        if (!InputUserValidation.isDateValid((couponDto.getStartDate()))
+            || !InputUserValidation.isDateValid((couponDto.getEndDate()))) {
             throw new UserValidationException(Constraint.INVALID_INPUT_FORMAT);
         }
 
@@ -191,8 +184,6 @@ public class CompanyService {
 
     public List<CouponDto> getCouponsByCategory(final Long companyId, final CouponCategory category) throws ApplicationException {
 
-        List<CouponDto> couponsOfCompanyByCategory = new ArrayList<>();
-
         //Setting a specific company
         Company company = OptionalToEntityConvertorUtil.optionalCompany(companyRepository.findById(companyId));
 
@@ -202,31 +193,24 @@ public class CompanyService {
         }
 
         //Setting the coupons of specific company
-        List<CouponDto> coupons = getAllCoupons(companyId);
+        List<CouponDto> companyCoupons = getAllCoupons(companyId);
 
         //Checking if the coupons are not exists
-        if (coupons == null) {
+        if (companyCoupons == null) {
             throw new EntityNotExistException(EntityType.COUPON, Constraint.ENTITY_NOT_EXISTS);
         }
 
-        for (CouponDto coupon : coupons) {
-            //Checking for each coupon if it is from same category
-            if (coupon.getCategory().equals(category)) {
-                //Adding the specific coupon to a list
-                couponsOfCompanyByCategory.add(coupon);
-                break;
-            }
-            log.info("The company: " + company.getName() + " doesn't holds coupons from this category!");
-        }
-        return couponsOfCompanyByCategory;
+        //Checking for each coupon if it is from same category
+        return companyCoupons.
+                stream().
+                filter(couponDto -> couponDto.getCategory().equals(category)).
+                collect(Collectors.toList());
     }
 
     //-------------------------------------Getting all coupons according to price----------------------------------
 
     public List<CouponDto> getCouponsByMaxPrice(final Long companyId, final double maxPrice) throws ApplicationException {
 
-        List<CouponDto> couponsByMax = new ArrayList<>();
-
         //Setting a specific company
         Company company = OptionalToEntityConvertorUtil.optionalCompany(companyRepository.findById(companyId));
 
@@ -236,22 +220,18 @@ public class CompanyService {
         }
 
         //Setting the coupons of specific company
-        List<CouponDto> coupons = getAllCoupons(companyId);
+        List<CouponDto> couponsByMax = getAllCoupons(companyId);
 
         //Checking if the coupons are not exists
-        if (coupons == null) {
+        if (couponsByMax == null) {
             throw new EntityNotExistException(EntityType.COUPON, Constraint.ENTITY_NOT_EXISTS);
         }
 
-        for (CouponDto coupon : coupons) {
-            if (coupon.getPrice() <= maxPrice) {
-                //Adding the specific coupons according the selected price limit
-                couponsByMax.add(coupon);
-            } else {
-                log.info("There is no any coupons less or equal the inserted price!");
-            }
-        }
-        return couponsByMax;
+        //Checking for each coupon if it is according to inserted price
+        return couponsByMax.
+                stream().
+                filter(couponDto -> couponDto.getPrice() <= maxPrice).
+                collect(Collectors.toList());
     }
 
     //-------------------------------------Get a specific company-------------------------------------------------

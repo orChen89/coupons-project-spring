@@ -17,9 +17,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -75,7 +75,6 @@ public class CustomerService {
         updatedCustomerCoupons.add(currentCoupon);
         //Setting the updated coupons list of the specific customer
         currentCustomer.setCoupons(updatedCustomerCoupons);
-
         //Creating a new coupon purchase with updated info
         customerRepository.save(currentCustomer);
 
@@ -90,17 +89,15 @@ public class CustomerService {
 
     public List<CouponDto> getAllCouponsByCustomerId(final Long customerId) throws ApplicationException {
 
-        //Setting the coupons list according the specific customer
-        List<Coupon> customerCoupons = couponRepository.getCouponsByCustomersId(customerId);
+        //Converting the coupons list to a list of coupons Dto according the specific customer
+        List<CouponDto> dtoCoupons = ObjectMappingUtil.
+                couponsToCouponsDto(couponRepository.
+                        getCouponsByCustomersId(customerId));
 
         //Checking if coupons are not exist
-        if (customerCoupons == null) {
+        if (dtoCoupons == null) {
             throw new EntityNotExistException(EntityType.COUPON, Constraint.ENTITY_NOT_EXISTS);
         }
-
-        //Converting the coupons list to a list of coupons Dto according the specific customer
-        List<CouponDto> dtoCoupons = ObjectMappingUtil.couponsToCouponsDto(customerCoupons);
-
         return dtoCoupons;
     }
 
@@ -109,29 +106,20 @@ public class CustomerService {
     public CustomerDto getCustomer(final Long customerId) throws ApplicationException {
 
         //Setting a specific customer
-        Customer customer = OptionalToEntityConvertorUtil.optionalCustomer(customerRepository.findById(customerId));
+        CustomerDto customerDto = ObjectMappingUtil.
+                customerToCustomerDto(OptionalToEntityConvertorUtil.
+                        optionalCustomer(customerRepository.findById(customerId)));
 
         //Checking if the customer is not exists
-        if (customer == null) {
+        if (customerDto == null) {
             throw new EntityNotExistException(EntityType.CUSTOMER, Constraint.ENTITY_NOT_EXISTS);
         }
-
-        List<CouponDto> customerCouponsDto = getAllCouponsByCustomerId(customerId);
-
-        List<Coupon> customerCoupons = ObjectMappingUtil.couponsDtoToCoupons(customerCouponsDto);
-
-        customer.setCoupons(customerCoupons);
-
-        CustomerDto customerDto = ObjectMappingUtil.customerToCustomerDto(customer);
-
         return customerDto;
     }
 
     //-----------------------------------Getting all coupons by category-------------------------------------------
 
     public List<CouponDto> getCouponsByCategory(final Long customerId, final CouponCategory category) throws ApplicationException {
-
-        List<CouponDto> couponsOfCustomerByCategory = new ArrayList<>();
 
         //Setting a specific customer
         Customer customer = OptionalToEntityConvertorUtil.optionalCustomer(customerRepository.findById(customerId));
@@ -148,50 +136,35 @@ public class CustomerService {
         if (coupons == null) {
             throw new EntityNotExistException(EntityType.COUPON, Constraint.ENTITY_NOT_EXISTS);
         }
-        for (CouponDto coupon : coupons) {
-            //Checking for each coupon if it is from same category
-            if (coupon.getCategory().equals(category)) {
-                //Adding the specific coupon to a list
-                couponsOfCustomerByCategory.add(coupon);
-                break;
-            }
-            log.info("The customer: " + customer.getFirstName() +
-                    " " + customer.getLastName() +
-                    " doesn't holds coupons from this category!");
-        }
-        return couponsOfCustomerByCategory;
+
+        //Checking for each coupon if it is from same category
+        return coupons.
+                stream().
+                filter(couponDto -> couponDto.getCategory().equals(category)).
+                collect(Collectors.toList());
     }
 
     //-----------------------------------Getting all coupons according to price------------------------------------
 
     public List<CouponDto> getCouponsByMaxPrice(final Long customerId, final double maxPrice) throws ApplicationException {
 
-        List<CouponDto> couponsByMax = new ArrayList<>();
-
-        //Setting a specific customer
-        Customer customer = OptionalToEntityConvertorUtil.optionalCustomer(customerRepository.findById(customerId));
-
         //Checking if the customer is not exists
-        if(customer == null) {
+        if(!customerRepository.existsById(customerId)) {
             throw new EntityNotExistException(EntityType.CUSTOMER, Constraint.ENTITY_NOT_EXISTS);
         }
 
         //Setting the customer's coupons according to specific customer
-        List<CouponDto> coupons = getAllCouponsByCustomerId(customerId);
+        List<CouponDto> couponsByMax = getAllCouponsByCustomerId(customerId);
 
         //Checking if the coupons are not exists
-        if (coupons == null) {
+        if (couponsByMax == null) {
             throw new EntityNotExistException(EntityType.COUPON, Constraint.ENTITY_NOT_EXISTS);
         }
 
-        for (CouponDto coupon : coupons) {
-            if (coupon.getPrice() <= maxPrice) {
-                //Adding the specific coupons according the selected price limit
-                couponsByMax.add(coupon);
-            } else {
-                log.info("There is no any coupons less or equal the inserted price!");
-            }
-        }
-        return couponsByMax;
+        //Checking for each coupon if it is according to inserted price
+        return couponsByMax.
+                stream().
+                filter(couponDto -> couponDto.getPrice() <= maxPrice).
+                collect(Collectors.toList());
     }
 }

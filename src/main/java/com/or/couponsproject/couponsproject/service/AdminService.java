@@ -34,22 +34,16 @@ public class AdminService {
     public Company createCompany(final CompanyDto companyDto) throws ApplicationException {
 
         //Checking if hashed password is valid according to password REGEX
-        if (!InputUserValidation.isPasswordValid(String.valueOf(companyDto.getPassword()))) {
-            throw new UserValidationException(Constraint.INVALID_INPUT_FORMAT);
-        }
-
         //Checking if email address is valid according to Email REGEX
-        if (!InputUserValidation.isEmailValid(companyDto.getEmail())) {
+        if (!InputUserValidation.isPasswordValid(String.valueOf(companyDto.getPassword()))
+                || !InputUserValidation.isEmailValid(companyDto.getEmail())) {
             throw new UserValidationException(Constraint.INVALID_INPUT_FORMAT);
         }
 
         //Checking if company is already exists according to email
-        if (companyRepository.existsByEmail(companyDto.getEmail())) {
-            throw new EntityExistException(EntityType.COMPANY, Constraint.ENTITY_ALREADY_EXISTS);
-        }
-
         //Checking if company is already exists according to name
-        if (companyRepository.findByName(companyDto.getName()) != null) {
+        if (companyRepository.existsByEmail(companyDto.getEmail())
+                || companyRepository.findByName(companyDto.getName()) != null) {
             throw new EntityExistException(EntityType.COMPANY, Constraint.ENTITY_ALREADY_EXISTS);
         }
 
@@ -175,12 +169,9 @@ public class AdminService {
     public Customer createCustomer(final CustomerDto customerDto) throws ApplicationException {
 
         //Checking if hashed password address is valid according to password REGEX
-        if (!InputUserValidation.isPasswordValid(customerDto.getPassword())) {
-            throw new UserValidationException(Constraint.INVALID_INPUT_FORMAT);
-        }
-
         //Checking if email address is valid according to Email REGEX
-        if (!InputUserValidation.isEmailValid(customerDto.getEmail())) {
+        if (!InputUserValidation.isPasswordValid(customerDto.getPassword())
+                || !InputUserValidation.isEmailValid(customerDto.getEmail())) {
             throw new UserValidationException(Constraint.INVALID_INPUT_FORMAT);
         }
 
@@ -260,11 +251,6 @@ public class AdminService {
         if (dtoCustomers == null) {
             throw new EntityNotExistException(EntityType.CUSTOMER, Constraint.ENTITY_NOT_EXISTS);
         }
-
-        for (CustomerDto customer : dtoCustomers) {
-            //Setting to every customer its coupons
-            customer.setCoupons(getCustomer(customer.getId()).getCoupons());
-        }
         return dtoCustomers;
     }
 
@@ -280,14 +266,8 @@ public class AdminService {
             throw new EntityNotExistException(EntityType.CUSTOMER, Constraint.ENTITY_NOT_EXISTS);
         }
 
-        List<CouponDto> dtoCoupons;
-
-        dtoCoupons = ObjectMappingUtil.couponsToCouponsDto(customer.getCoupons());
-
         //Converting customer to customerDto entity
         CustomerDto customerDto = ObjectMappingUtil.customerToCustomerDto(customer);
-        //Setting the converted coupons to customer coupons list
-        customerDto.setCoupons(dtoCoupons);
 
         return customerDto;
     }

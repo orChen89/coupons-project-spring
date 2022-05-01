@@ -48,7 +48,7 @@ public class CompanyController {
     }
 
     @ResponseStatus(HttpStatus.FOUND)
-    @GetMapping("getByCategory/companyId/{companyId}/category/{category}")
+    @GetMapping("getByCategory/{companyId}/{category}")
     public List<CouponDto> getCouponsByCategory(@PathVariable(name = "companyId") final long companyId,
                                                 @PathVariable(name = "category")
                                                 final CouponCategory couponCategory) throws ApplicationException {
@@ -56,7 +56,7 @@ public class CompanyController {
     }
 
     @ResponseStatus(HttpStatus.FOUND)
-    @GetMapping("getByMaxPrice/companyId/{companyId}/maxPrice/{maxPrice}")
+    @GetMapping("getByMaxPrice/{companyId}/{maxPrice}")
     public List<CouponDto> getCouponsByMaxPrice(@PathVariable(name = "companyId") final Long companyId,
                                                 @PathVariable(name = "maxPrice")
                                                 final double maxPrice) throws ApplicationException {

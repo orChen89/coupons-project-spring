@@ -652,7 +652,7 @@ public class Test implements CommandLineRunner {
         try {
             //Setting a response entity of coupons dto array and activating the controller get all method
             ResponseEntity<CouponDto[]> coupons = restTemplate.
-                    getForEntity("http://localhost:8080/company/getByCategory/companyId/5/category/VACATION",
+                    getForEntity("http://localhost:8080/company/getByCategory/5/VACATION",
                             CouponDto[].class);
 
             //Getting a coupons list to an objects array body
@@ -677,7 +677,7 @@ public class Test implements CommandLineRunner {
         try {
             //Setting a response entity of coupons dto array and activating the controller get all method
             ResponseEntity<CouponDto[]> coupons = restTemplate.
-                    getForEntity("http://localhost:8080/company/getByMaxPrice/companyId/4/maxPrice/5000.0",
+                    getForEntity("http://localhost:8080/company/getByMaxPrice/4/5000.0",
                             CouponDto[].class);
 
             //Getting a coupons list to an objects array body
@@ -721,7 +721,7 @@ public class Test implements CommandLineRunner {
 
         try {
             //Setting a post for entity of specific customer and coupon and activating the controller purchase method
-            restTemplate.postForEntity("http://localhost:8080/customer/purchase/customerId/1/couponId/4",
+            restTemplate.postForEntity("http://localhost:8080/customer/purchase/1/4",
                     null, Void.class);
 
             log.info(TestColorsConstants.ANSI_YELLOW_BACKGROUND + TestColorsConstants.ANSI_BLACK + "Test Passed!" +
@@ -783,7 +783,7 @@ public class Test implements CommandLineRunner {
         try {
             //Setting a response entity of coupons dto array and activating the controller get all method
             ResponseEntity<CouponDto[]> coupons = restTemplate.
-                    getForEntity("http://localhost:8080/customer/getCouponsByCategory/customerId/1/category/ELECTRICITY",
+                    getForEntity("http://localhost:8080/customer/getCouponsByCategory/1/ELECTRICITY",
                             CouponDto[].class);
 
             //Getting a coupons list to an objects array body
@@ -808,7 +808,7 @@ public class Test implements CommandLineRunner {
         try {
             //Setting a response entity of coupons dto array and activating the controller get all method
             ResponseEntity<CouponDto[]> coupons = restTemplate.
-                    getForEntity("http://localhost:8080/customer/getCouponsByMaxPrice/customerId/3/maxPrice/100.0",
+                    getForEntity("http://localhost:8080/customer/getCouponsByMaxPrice/3/100.0",
                             CouponDto[].class);
 
             //Getting a coupons list to an objects array body
