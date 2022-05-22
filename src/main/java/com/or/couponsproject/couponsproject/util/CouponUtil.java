@@ -16,8 +16,4 @@ public class CouponUtil {
         return date.isBefore(LocalDate.now());
     }
 
-    //This method is checking if a coupon date is past today
-    public static boolean isCouponDateValid(final LocalDate date) {
-        return date.isAfter(LocalDate.now());
-    }
 }

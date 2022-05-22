@@ -5,9 +5,11 @@ import com.or.couponsproject.couponsproject.dto.CouponDto;
 import com.or.couponsproject.couponsproject.dto.CustomerDto;
 import com.or.couponsproject.couponsproject.enums.CouponCategory;
 import com.or.couponsproject.couponsproject.errors.exceptions.ApplicationException;
+import com.or.couponsproject.couponsproject.model.Coupon;
 import com.or.couponsproject.couponsproject.service.AdminService;
 import com.or.couponsproject.couponsproject.service.CompanyService;
 import com.or.couponsproject.couponsproject.service.CustomerService;
+import com.or.couponsproject.couponsproject.util.ObjectMappingUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -16,9 +18,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 @Component
 @Slf4j
@@ -324,7 +328,7 @@ public class Test implements CommandLineRunner {
             CompanyDto companyResponse = company.getBody();
             log.info(TestColorsConstants.ANSI_YELLOW_BACKGROUND + TestColorsConstants.ANSI_BLACK + "Test Passed!" +
                     TestColorsConstants.ANSI_DEFAULT_RESET);
-            return companyResponse == null;
+            return companyResponse != null;
             //Catching all exceptions
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -550,7 +554,8 @@ public class Test implements CommandLineRunner {
             CouponDto couponResponse = coupon.getBody();
             log.info(TestColorsConstants.ANSI_YELLOW_BACKGROUND + TestColorsConstants.ANSI_BLACK + "Test Passed!" +
                     TestColorsConstants.ANSI_DEFAULT_RESET);
-            return couponResponse == null;
+            System.out.println(couponResponse);
+            return couponResponse != null;
             //Catching all exceptions
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -999,6 +1004,7 @@ public class Test implements CommandLineRunner {
         }
     }
 }
+
 
 
 

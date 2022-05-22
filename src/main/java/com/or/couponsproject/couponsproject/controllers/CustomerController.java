@@ -25,19 +25,19 @@ public class CustomerController {
         customerService.addCouponPurchase(customerId, couponId);
     }
 
-    @ResponseStatus(HttpStatus.FOUND)
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/getCustomerCoupons/{customerId}")
     public List<CouponDto> getAllCouponsByCustomerId(@PathVariable final long customerId) throws ApplicationException {
         return customerService.getAllCouponsByCustomerId(customerId);
     }
 
-    @ResponseStatus(HttpStatus.FOUND)
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/getCustomer/{customerId}")
     public CustomerDto getCustomer(@PathVariable final long customerId) throws ApplicationException {
         return customerService.getCustomer(customerId);
     }
 
-    @ResponseStatus(HttpStatus.FOUND)
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("/getCouponsByCategory/{customerId}/{category}")
     public List<CouponDto> getCouponsByCategory(@PathVariable(name = "customerId") final long customerId,
                                                 @PathVariable(name = "category") final CouponCategory couponCategory)
@@ -45,7 +45,7 @@ public class CustomerController {
         return customerService.getCouponsByCategory(customerId, couponCategory);
     }
 
-    @ResponseStatus(HttpStatus.FOUND)
+    @ResponseStatus(HttpStatus.OK)
     @GetMapping("getCouponsByMaxPrice/{customerId}/{maxPrice}")
     public List<CouponDto> getCouponsByMaxPrice(@PathVariable(name = "customerId") final Long customerId,
                                                 @PathVariable(name = "maxPrice") final double maxPrice)

@@ -6,6 +6,7 @@ import com.or.couponsproject.couponsproject.dto.CustomerDto;
 import com.or.couponsproject.couponsproject.model.Company;
 import com.or.couponsproject.couponsproject.model.Coupon;
 import com.or.couponsproject.couponsproject.model.Customer;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -158,4 +159,5 @@ public class ObjectMappingUtil {
         }
         return couponsList;
     }
+
 }

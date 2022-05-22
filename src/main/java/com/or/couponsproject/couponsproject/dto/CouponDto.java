@@ -1,11 +1,9 @@
 package com.or.couponsproject.couponsproject.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.or.couponsproject.couponsproject.enums.CouponCategory;
 import lombok.*;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+
 import java.time.LocalDate;
 
 @Data
