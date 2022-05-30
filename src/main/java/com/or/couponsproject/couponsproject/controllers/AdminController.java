@@ -1,15 +1,17 @@
 package com.or.couponsproject.couponsproject.controllers;
 
 import com.or.couponsproject.couponsproject.dto.CompanyDto;
+import com.or.couponsproject.couponsproject.dto.CompanyListDtoWrapper;
 import com.or.couponsproject.couponsproject.dto.CustomerDto;
+import com.or.couponsproject.couponsproject.dto.CustomerListDtoWrapper;
 import com.or.couponsproject.couponsproject.errors.exceptions.ApplicationException;
 import com.or.couponsproject.couponsproject.model.Company;
+import com.or.couponsproject.couponsproject.model.Customer;
 import com.or.couponsproject.couponsproject.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
 
 @RequestMapping("admin")
 @RestController
@@ -38,8 +40,8 @@ public class AdminController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/company")
-    public Set<CompanyDto> getAllCompanies() throws ApplicationException {
-        return adminService.getAllCompanies();
+    public CompanyListDtoWrapper getAllCompanies() throws ApplicationException {
+        return new CompanyListDtoWrapper(adminService.getAllCompanies());
     }
 
     @ResponseStatus(HttpStatus.OK)
@@ -50,8 +52,8 @@ public class AdminController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/customer")
-    public void createCustomer(@RequestBody final CustomerDto customer) throws ApplicationException {
-        adminService.createCustomer(customer);
+    public Customer createCustomer(@RequestBody final CustomerDto customer) throws ApplicationException {
+        return adminService.createCustomer(customer);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -68,8 +70,8 @@ public class AdminController {
 
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/customer")
-    public Set<CustomerDto> getAllCustomers() throws ApplicationException {
-        return adminService.getAllCustomers();
+    public CustomerListDtoWrapper getAllCustomers() throws ApplicationException {
+        return new CustomerListDtoWrapper(adminService.getAllCustomers());
     }
 
     @ResponseStatus(HttpStatus.OK)

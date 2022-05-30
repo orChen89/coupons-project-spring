@@ -2,16 +2,15 @@ package com.or.couponsproject.couponsproject.controllers;
 
 import com.or.couponsproject.couponsproject.dto.CompanyDto;
 import com.or.couponsproject.couponsproject.dto.CouponDto;
+import com.or.couponsproject.couponsproject.dto.CouponListDtoWrapper;
 import com.or.couponsproject.couponsproject.enums.CouponCategory;
 import com.or.couponsproject.couponsproject.errors.exceptions.ApplicationException;
-import com.or.couponsproject.couponsproject.model.Coupon;
 import com.or.couponsproject.couponsproject.service.CompanyService;
 import com.or.couponsproject.couponsproject.util.ObjectMappingUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RequestMapping("company")
 @RestController
@@ -45,29 +44,29 @@ public class CompanyController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("companyCoupons/{companyId}")
-    public List<CouponDto> getAllCouponsByCompanyId(@PathVariable final long companyId) throws ApplicationException {
-        return companyService.getAllCoupons(companyId);
+    @GetMapping("/get-coupons/{companyId}")
+    public CouponListDtoWrapper getAllCouponsByCompanyId(@PathVariable final long companyId) throws ApplicationException {
+        return new CouponListDtoWrapper(companyService.getAllCoupons(companyId));
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("getByCategory/{companyId}/{category}")
-    public List<CouponDto> getCouponsByCategory(@PathVariable(name = "companyId") final long companyId,
-                                                @PathVariable(name = "category")
+    @GetMapping("/coupons-by-category/{companyId}")
+    public CouponListDtoWrapper getCouponsByCategory(@PathVariable(name = "companyId") final long companyId,
+                                                @RequestParam(name = "category")
                                                 final CouponCategory couponCategory) throws ApplicationException {
-        return companyService.getCouponsByCategory(companyId, couponCategory);
+        return new CouponListDtoWrapper(companyService.getCouponsByCategory(companyId, couponCategory));
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("getByMaxPrice/{companyId}/{maxPrice}")
-    public List<CouponDto> getCouponsByMaxPrice(@PathVariable(name = "companyId") final Long companyId,
-                                                @PathVariable(name = "maxPrice")
+    @GetMapping("/get-by-price/{companyId}")
+    public CouponListDtoWrapper getCouponsByMaxPrice(@PathVariable(name = "companyId") final Long companyId,
+                                                @RequestParam(name = "maxPrice")
                                                 final double maxPrice) throws ApplicationException {
-        return companyService.getCouponsByMaxPrice(companyId, maxPrice);
+        return new CouponListDtoWrapper(companyService.getCouponsByMaxPrice(companyId, maxPrice));
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("getCompany/{companyId}")
+    @GetMapping("/get/{companyId}")
     public CompanyDto getCompany(@PathVariable final long companyId) throws ApplicationException {
         return companyService.getCompany(companyId);
     }

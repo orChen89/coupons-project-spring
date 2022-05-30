@@ -1,15 +1,11 @@
 package com.or.couponsproject.couponsproject.clr;
 
-import com.or.couponsproject.couponsproject.dto.CompanyDto;
-import com.or.couponsproject.couponsproject.dto.CouponDto;
-import com.or.couponsproject.couponsproject.dto.CustomerDto;
+import com.or.couponsproject.couponsproject.dto.*;
 import com.or.couponsproject.couponsproject.enums.CouponCategory;
 import com.or.couponsproject.couponsproject.errors.exceptions.ApplicationException;
-import com.or.couponsproject.couponsproject.model.Coupon;
 import com.or.couponsproject.couponsproject.service.AdminService;
 import com.or.couponsproject.couponsproject.service.CompanyService;
 import com.or.couponsproject.couponsproject.service.CustomerService;
-import com.or.couponsproject.couponsproject.util.ObjectMappingUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -21,7 +17,6 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 @Component
@@ -44,6 +39,7 @@ public class Test implements CommandLineRunner {
         companyTest();
         customerTest();
         advancedTests();
+
     }
 
     //-----------------------------------Companies creation by default -->-----------------------------------
@@ -322,7 +318,7 @@ public class Test implements CommandLineRunner {
         try {
             //Setting a response entity of company and activating the controller post method
             ResponseEntity<CompanyDto> company = restTemplate.
-                    postForEntity(TestUrlConstants.POST_OR_UPDATE_COMPANY_URL, companyDto, CompanyDto.class);
+                    postForEntity(TestUrlConstants. POST_OR_UPDATE_COMPANY_BY_ADMIN_URL, companyDto, CompanyDto.class);
 
             //Checking the company body if not null
             CompanyDto companyResponse = company.getBody();
@@ -349,7 +345,7 @@ public class Test implements CommandLineRunner {
 
         try {
             //Activating the controller update method
-            restTemplate.put(TestUrlConstants.POST_OR_UPDATE_COMPANY_URL, request, HttpMethod.PUT, Void.class);
+            restTemplate.put(TestUrlConstants.POST_OR_UPDATE_COMPANY_BY_ADMIN_URL, request, HttpMethod.PUT, Void.class);
             log.info(TestColorsConstants.ANSI_YELLOW_BACKGROUND + TestColorsConstants.ANSI_BLACK + "Test Passed!" +
                     TestColorsConstants.ANSI_DEFAULT_RESET);
             return true;
@@ -378,20 +374,17 @@ public class Test implements CommandLineRunner {
     public boolean getAllCompanies() {
 
         try {
-            //Setting a response entity of company dto array and activating the controller get all method
-            ResponseEntity<CompanyDto[]> companiesList = restTemplate.
-                    getForEntity(TestUrlConstants.GETTING_ALL_COMPANIES_URL, CompanyDto[].class);
+            //Setting a response entity of company dto and activating the controller get all method
+            ResponseEntity<CompanyListDtoWrapper> companiesList = restTemplate.
+                    getForEntity(TestUrlConstants.GETTING_ALL_COMPANIES_URL, CompanyListDtoWrapper.class);
 
-            //Getting a companies list to an objects array body
-            CompanyDto[] companyDtos = companiesList.getBody();
+            //Setting a companies list to a variable from the response entity
+            CompanyListDtoWrapper companyDtos = companiesList.getBody();
 
-            assert companyDtos != null;
-            //Placing the received body of company set in a set variable
-            Set<CompanyDto> companies = (Set.of(companyDtos));
-            System.out.println(companies);
+            System.out.println(companyDtos);
             log.info(TestColorsConstants.ANSI_YELLOW_BACKGROUND + TestColorsConstants.ANSI_BLACK + "Test Passed!" +
                     TestColorsConstants.ANSI_DEFAULT_RESET);
-            return companies != null;
+            return companyDtos != null;
             //Catching all exceptions
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -437,7 +430,7 @@ public class Test implements CommandLineRunner {
             CustomerDto customerResponse = customer.getBody();
             log.info(TestColorsConstants.ANSI_YELLOW_BACKGROUND + TestColorsConstants.ANSI_BLACK + "Test Passed!" +
                     TestColorsConstants.ANSI_DEFAULT_RESET);
-            return customerResponse == null;
+            return customerResponse != null;
             //Catching all exceptions
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -488,20 +481,17 @@ public class Test implements CommandLineRunner {
     public boolean getAllCustomers() {
 
         try {
-            //Setting a response entity of customer dto array and activating the controller get all method
-            ResponseEntity<CustomerDto[]> customersList = restTemplate.
-                    getForEntity(TestUrlConstants.GETTING_ALL_CUSTOMERS_URL, CustomerDto[].class);
+            //Setting a response entity of customer dto and activating the controller get all method
+            ResponseEntity<CustomerListDtoWrapper> customersList = restTemplate.
+                    getForEntity(TestUrlConstants.GETTING_ALL_CUSTOMERS_URL, CustomerListDtoWrapper.class);
 
-            //Getting a customers list to an objects array body
-            CustomerDto[] customreDtos = customersList.getBody();
+            //Setting a customers list to a variable from the response entity
+            CustomerListDtoWrapper customreDtos = customersList.getBody();
 
-            assert customreDtos != null;
-            //Placing the received body of customers set in a set variable
-            Set<CustomerDto> customers = (Set.of(customreDtos));
-            System.out.println(customers);
+            System.out.println(customreDtos);
             log.info(TestColorsConstants.ANSI_YELLOW_BACKGROUND + TestColorsConstants.ANSI_BLACK + "Test Passed!" +
                     TestColorsConstants.ANSI_DEFAULT_RESET);
-            return customers != null;
+            return customreDtos != null;
             //Catching all exceptions
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -611,7 +601,7 @@ public class Test implements CommandLineRunner {
     public boolean getCoupon() {
 
         try {
-            //Setting a response entity of coupon dto nd activating the controller get method
+            //Setting a response entity of coupon dto שnd activating the controller get method
             ResponseEntity<CouponDto> couponDto = restTemplate.
                     getForEntity(TestUrlConstants.GET_COUPON_URL + "3", CouponDto.class);
 
@@ -631,20 +621,16 @@ public class Test implements CommandLineRunner {
     public boolean getAllCompanyCoupons() {
 
         try {
-            //Setting a response entity of coupons dto array and activating the controller get all method
-            ResponseEntity<CouponDto[]> coupons = restTemplate.
-                    getForEntity(TestUrlConstants.GETTING_ALL_COMPANY_COUPONS_URL + "2", CouponDto[].class);
+            //Setting a response entity of coupons dto and activating the controller get all method
+            ResponseEntity<CouponListDtoWrapper> coupons = restTemplate.
+                    getForEntity(TestUrlConstants.GETTING_ALL_COMPANY_COUPONS_URL + "2", CouponListDtoWrapper.class);
 
-            //Getting a coupons list to an objects array body
-            CouponDto[] companyCoupons = coupons.getBody();
-
-            assert companyCoupons != null;
-            //Placing the received body of coupons list in a set variable
-            List<CouponDto> couponsList = (List.of(companyCoupons));
-            System.out.println(couponsList);
+            //Setting a coupons list to a variable from the response entity
+            CouponListDtoWrapper companyCoupons = coupons.getBody();
+            System.out.println(companyCoupons);
             log.info(TestColorsConstants.ANSI_YELLOW_BACKGROUND + TestColorsConstants.ANSI_BLACK + "Test Passed!" +
                     TestColorsConstants.ANSI_DEFAULT_RESET);
-            return couponsList != null;
+            return companyCoupons != null;
             //Catching all exceptions
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -655,21 +641,17 @@ public class Test implements CommandLineRunner {
     public boolean getCompanyCouponsByCategory() {
 
         try {
-            //Setting a response entity of coupons dto array and activating the controller get all method
-            ResponseEntity<CouponDto[]> coupons = restTemplate.
-                    getForEntity("http://localhost:8080/company/getByCategory/5/VACATION",
-                            CouponDto[].class);
+            //Setting a response entity of coupons dto and activating the controller get all method
+            ResponseEntity<CouponListDtoWrapper> coupons = restTemplate.
+                    getForEntity("http://localhost:8080/company/coupons-by-category/5?category=VACATION",
+                            CouponListDtoWrapper.class);
 
-            //Getting a coupons list to an objects array body
-            CouponDto[] companyCoupons = coupons.getBody();
-
-            assert companyCoupons != null;
-            //Placing the received body of coupons list in a set variable
-            List<CouponDto> couponsList = (List.of(companyCoupons));
-            System.out.println(couponsList);
+            //Setting a coupons list to a variable from the response entity
+            CouponListDtoWrapper companyCoupons = coupons.getBody();
+            System.out.println(companyCoupons);
             log.info(TestColorsConstants.ANSI_YELLOW_BACKGROUND + TestColorsConstants.ANSI_BLACK + "Test Passed!" +
                     TestColorsConstants.ANSI_DEFAULT_RESET);
-            return couponsList != null;
+            return companyCoupons != null;
             //Catching all exceptions
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -680,21 +662,17 @@ public class Test implements CommandLineRunner {
     public boolean getCompanyCouponsByPrice() {
 
         try {
-            //Setting a response entity of coupons dto array and activating the controller get all method
-            ResponseEntity<CouponDto[]> coupons = restTemplate.
-                    getForEntity("http://localhost:8080/company/getByMaxPrice/4/5000.0",
-                            CouponDto[].class);
+            //Setting a response entity of coupons dto and activating the controller get all method
+            ResponseEntity<CouponListDtoWrapper> coupons = restTemplate.
+                    getForEntity("http://localhost:8080/company/get-by-price/4?maxPrice=5000.0",
+                            CouponListDtoWrapper.class);
 
-            //Getting a coupons list to an objects array body
-            CouponDto[] companyCoupons = coupons.getBody();
-
-            assert companyCoupons != null;
-            //Placing the received body of coupons list in a set variable
-            List<CouponDto> couponsList = (List.of(companyCoupons));
-            System.out.println(couponsList);
+            //Setting a coupons list to a variable from the response entity
+            CouponListDtoWrapper companyCouponsByPrice = coupons.getBody();
+            System.out.println(companyCouponsByPrice);
             log.info(TestColorsConstants.ANSI_YELLOW_BACKGROUND + TestColorsConstants.ANSI_BLACK + "Test Passed!" +
                     TestColorsConstants.ANSI_DEFAULT_RESET);
-            return couponsList != null;
+            return companyCouponsByPrice != null;
             //Catching all exceptions
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -726,7 +704,7 @@ public class Test implements CommandLineRunner {
 
         try {
             //Setting a post for entity of specific customer and coupon and activating the controller purchase method
-            restTemplate.postForEntity("http://localhost:8080/customer/purchase/1/4",
+            restTemplate.postForEntity("http://localhost:8080/customer/1/4",
                     null, Void.class);
 
             log.info(TestColorsConstants.ANSI_YELLOW_BACKGROUND + TestColorsConstants.ANSI_BLACK + "Test Passed!" +
@@ -742,20 +720,16 @@ public class Test implements CommandLineRunner {
     public boolean getAllCustomerCoupons() {
 
         try {
-            //Setting a response entity of coupon dto array and activating the controller get all method
-            ResponseEntity<CouponDto[]> coupons = restTemplate.
-                    getForEntity(TestUrlConstants.GET_ALL_CUSTOMER_COUPONS_URL + "3", CouponDto[].class);
+            //Setting a response entity of coupon dto and activating the controller get all method
+            ResponseEntity<CouponListDtoWrapper> coupons = restTemplate.
+                    getForEntity(TestUrlConstants.GET_ALL_CUSTOMER_COUPONS_URL + "3", CouponListDtoWrapper.class);
 
-            //Getting a coupons list to an objects array body
-            CouponDto[] customerCoupons = coupons.getBody();
-
-            assert customerCoupons != null;
-            //Placing the received body of coupons set in a set variable
-            List<CouponDto> couponsList = (List.of(customerCoupons));
-            System.out.println(couponsList);
+            //Setting a coupons list to a variable from the response entity
+            CouponListDtoWrapper customerCoupons = coupons.getBody();
+            System.out.println(customerCoupons);
             log.info(TestColorsConstants.ANSI_YELLOW_BACKGROUND + TestColorsConstants.ANSI_BLACK + "Test Passed!" +
                     TestColorsConstants.ANSI_DEFAULT_RESET);
-            return couponsList != null;
+            return customerCoupons != null;
             //Catching all exceptions
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -786,21 +760,17 @@ public class Test implements CommandLineRunner {
     public boolean getCustomerCouponsByCategory() {
 
         try {
-            //Setting a response entity of coupons dto array and activating the controller get all method
-            ResponseEntity<CouponDto[]> coupons = restTemplate.
-                    getForEntity("http://localhost:8080/customer/getCouponsByCategory/1/ELECTRICITY",
-                            CouponDto[].class);
+            //Setting a response entity of coupons dto and activating the controller get all method
+            ResponseEntity<CouponListDtoWrapper> coupons = restTemplate.
+                    getForEntity("http://localhost:8080/customer/coupons-by-category/1?category=ELECTRICITY",
+                            CouponListDtoWrapper.class);
 
-            //Getting a coupons list to an objects array body
-            CouponDto[] customerCoupons = coupons.getBody();
-
-            assert customerCoupons != null;
-            //Placing the received body of coupon list in a set variable
-            List<CouponDto> couponsList = (List.of(customerCoupons));
-            System.out.println(couponsList);
+            //Setting a coupons list to a variable from the response entity
+            CouponListDtoWrapper customerCoupons = coupons.getBody();
+            System.out.println(customerCoupons);
             log.info(TestColorsConstants.ANSI_YELLOW_BACKGROUND + TestColorsConstants.ANSI_BLACK + "Test Passed!" +
                     TestColorsConstants.ANSI_DEFAULT_RESET);
-            return couponsList != null;
+            return customerCoupons != null;
             //Catching all exceptions
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -812,20 +782,16 @@ public class Test implements CommandLineRunner {
 
         try {
             //Setting a response entity of coupons dto array and activating the controller get all method
-            ResponseEntity<CouponDto[]> coupons = restTemplate.
-                    getForEntity("http://localhost:8080/customer/getCouponsByMaxPrice/3/100.0",
-                            CouponDto[].class);
+            ResponseEntity<CouponListDtoWrapper> coupons = restTemplate.
+                    getForEntity("http://localhost:8080/customer/get-by-price/3?maxPrice=100.0",
+                            CouponListDtoWrapper.class);
 
-            //Getting a coupons list to an objects array body
-            CouponDto[] customerCoupons = coupons.getBody();
-
-            assert customerCoupons != null;
-            //Placing the received body of coupon list in a set variable
-            List<CouponDto> couponsList = (List.of(customerCoupons));
-            System.out.println(couponsList);
+            //Setting a coupons list to a variable from the response entity
+            CouponListDtoWrapper customerCoupons = coupons.getBody();
+            System.out.println(customerCoupons);
             log.info(TestColorsConstants.ANSI_YELLOW_BACKGROUND + TestColorsConstants.ANSI_BLACK + "Test Passed!" +
                     TestColorsConstants.ANSI_DEFAULT_RESET);
-            return couponsList != null;
+            return customerCoupons != null;
             //Catching all exceptions
         } catch (Exception e) {
             log.error(e.getMessage());

@@ -1,6 +1,6 @@
 package com.or.couponsproject.couponsproject.controllers;
 
-import com.or.couponsproject.couponsproject.dto.CouponDto;
+import com.or.couponsproject.couponsproject.dto.CouponListDtoWrapper;
 import com.or.couponsproject.couponsproject.dto.CustomerDto;
 import com.or.couponsproject.couponsproject.enums.CouponCategory;
 import com.or.couponsproject.couponsproject.errors.exceptions.ApplicationException;
@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RequestMapping("customer")
 @RestController
@@ -19,37 +18,37 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("purchase/{customerId}/{couponId}")
+    @PostMapping("/{customerId}/{couponId}")
     public void createCouponPurchase(@PathVariable(name = "customerId") final long customerId,
                                      @PathVariable(name = "couponId") final long couponId) throws ApplicationException {
         customerService.addCouponPurchase(customerId, couponId);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/getCustomerCoupons/{customerId}")
-    public List<CouponDto> getAllCouponsByCustomerId(@PathVariable final long customerId) throws ApplicationException {
-        return customerService.getAllCouponsByCustomerId(customerId);
+    @GetMapping("/get-coupons/{customerId}")
+    public CouponListDtoWrapper getAllCouponsByCustomerId(@PathVariable final long customerId) throws ApplicationException {
+        return new CouponListDtoWrapper(customerService.getAllCouponsByCustomerId(customerId));
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/getCustomer/{customerId}")
+    @GetMapping("/{customerId}")
     public CustomerDto getCustomer(@PathVariable final long customerId) throws ApplicationException {
         return customerService.getCustomer(customerId);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/getCouponsByCategory/{customerId}/{category}")
-    public List<CouponDto> getCouponsByCategory(@PathVariable(name = "customerId") final long customerId,
-                                                @PathVariable(name = "category") final CouponCategory couponCategory)
+    @GetMapping("/coupons-by-category/{customerId}")
+    public CouponListDtoWrapper getCouponsByCategory(@PathVariable(name = "customerId") final long customerId,
+                                                     @RequestParam(name = "category") final CouponCategory couponCategory)
                                                 throws ApplicationException {
-        return customerService.getCouponsByCategory(customerId, couponCategory);
+        return new CouponListDtoWrapper(customerService.getCouponsByCategory(customerId, couponCategory));
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("getCouponsByMaxPrice/{customerId}/{maxPrice}")
-    public List<CouponDto> getCouponsByMaxPrice(@PathVariable(name = "customerId") final Long customerId,
-                                                @PathVariable(name = "maxPrice") final double maxPrice)
+    @GetMapping("/get-by-price/{customerId}")
+    public CouponListDtoWrapper getCouponsByMaxPrice(@PathVariable(name = "customerId") final Long customerId,
+                                                     @RequestParam(name = "maxPrice") final double maxPrice)
                                                 throws ApplicationException {
-        return customerService.getCouponsByMaxPrice(customerId, maxPrice);
+        return new CouponListDtoWrapper(customerService.getCouponsByMaxPrice(customerId, maxPrice));
     }
 }
