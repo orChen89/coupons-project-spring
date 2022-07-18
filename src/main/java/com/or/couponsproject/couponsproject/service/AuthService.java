@@ -18,8 +18,6 @@ public class AuthService {
     public JwtDto authenticate(UserDto userDto) {
 
         try {
-
-            System.out.println(userDto);
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(userDto.getEmail(), String.valueOf(userDto.getPassword().hashCode()))
             );
