@@ -13,6 +13,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
 
+import static com.or.couponsproject.couponsproject.constants.Constants.TWENTY_FOUR_HOURS;
+
 @Configuration
 @EnableScheduling
 @RequiredArgsConstructor
@@ -22,7 +24,7 @@ public class DailyJobTask {
     private final CouponRepository couponRepository;
     private final CompanyService companyService;
 
-    @Scheduled(fixedDelay = 86400000)
+    @Scheduled(fixedDelay = TWENTY_FOUR_HOURS)
     public void deleteExpiredCoupons() {
 
         List<Coupon> coupons = couponRepository.findAll();

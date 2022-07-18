@@ -1,8 +1,10 @@
 package com.or.couponsproject.couponsproject.util;
 
+import com.or.couponsproject.couponsproject.dto.AdminDto;
 import com.or.couponsproject.couponsproject.dto.CompanyDto;
 import com.or.couponsproject.couponsproject.dto.CouponDto;
 import com.or.couponsproject.couponsproject.dto.CustomerDto;
+import com.or.couponsproject.couponsproject.model.Admin;
 import com.or.couponsproject.couponsproject.model.Company;
 import com.or.couponsproject.couponsproject.model.Coupon;
 import com.or.couponsproject.couponsproject.model.Customer;
@@ -12,12 +14,22 @@ import java.util.List;
 
 public class ObjectMappingUtil {
 
+    public static Admin adminDtoToEntity(final AdminDto dto) {
+
+        //Converting an admin dto to Admin object
+        return Admin.builder().
+                email(dto.getEmail()).
+                password(dto.getPassword().hashCode()).
+                role(dto.getRole()).
+                build();
+    }
+
     public static Coupon couponDtoToCoupon(final CouponDto dto) {
 
         //Converting a coupon dto object to coupon object
         return Coupon.builder().
                 id(dto.getId()).
-                company(Company.builder().id(dto.getCompanyID()).build()).
+                company(Company.builder().id(dto.getCompanyId()).build()).
                 title(dto.getTitle()).
                 category(dto.getCategory()).
                 description(dto.getDescription()).
@@ -34,7 +46,7 @@ public class ObjectMappingUtil {
         //Converting a coupon dto object to coupon object
         return Coupon.builder().
                 id(dto.getId()).
-                company(Company.builder().id(dto.getCompanyID()).build()).
+                company(Company.builder().id(dto.getCompanyId()).build()).
                 title(dto.getTitle()).
                 category(dto.getCategory()).
                 description(dto.getDescription()).
@@ -53,6 +65,7 @@ public class ObjectMappingUtil {
                 name(dto.getName()).
                 email(dto.getEmail()).
                 password(dto.getPassword().hashCode()).
+                role(dto.getRole()).
                 build();
     }
 
@@ -64,6 +77,7 @@ public class ObjectMappingUtil {
                 name(dto.getName()).
                 email(dto.getEmail()).
                 password(dto.getPassword().hashCode()).
+                role(dto.getRole()).
                 build();
     }
 
@@ -75,6 +89,7 @@ public class ObjectMappingUtil {
                 lastName(dto.getLastName()).
                 email(dto.getEmail()).
                 password(dto.getPassword().hashCode()).
+                role(dto.getRole()).
                 build();
     }
 
@@ -87,6 +102,7 @@ public class ObjectMappingUtil {
                 lastName(dto.getLastName()).
                 email(dto.getEmail()).
                 password(dto.getPassword().hashCode()).
+                role(dto.getRole()).
                 build();
     }
 
@@ -98,7 +114,9 @@ public class ObjectMappingUtil {
                 firstName(customer.getFirstName()).
                 lastName(customer.getLastName()).
                 email(customer.getEmail()).
+                password(String.valueOf(customer.getPassword())).
                 coupons(couponsToCouponsDto(customer.getCoupons())).
+                role(customer.getRole()).
                 build();
     }
 
@@ -109,7 +127,9 @@ public class ObjectMappingUtil {
                 id(company.getId()).
                 name(company.getName()).
                 email(company.getEmail()).
+                password(String.valueOf(company.getPassword())).
                 coupons(couponsToCouponsDto(company.getCoupons())).
+                role(company.getRole()).
                 build();
     }
 
@@ -119,7 +139,7 @@ public class ObjectMappingUtil {
         return CouponDto.builder().
                 id(coupon.getId()).
                 title(coupon.getTitle()).
-                companyID(coupon.getCompany().getId()).
+                companyId(coupon.getCompany().getId()).
                 category(coupon.getCategory()).
                 description(coupon.getDescription()).
                 startDate(coupon.getStartDate()).
@@ -158,6 +178,35 @@ public class ObjectMappingUtil {
             }
         }
         return couponsList;
+    }
+    public static List<CompanyDto> companiesToCompaniesDto(final List<Company> companies) {
+
+        List<CompanyDto> dtoList = new ArrayList<>();
+
+        if (companies != null) {
+            for (Company c : companies) {
+                //Concerting each company from the inserted companies list to dto company object
+                CompanyDto companyDto = companyToCompanyDto(c);
+                //Adding the converted company to list of dto companies
+                dtoList.add(companyDto);
+            }
+        }
+        return dtoList;
+    }
+
+    public static List<CustomerDto> customersToCustomersDto(final List<Customer> customers) {
+
+        List<CustomerDto> dtoList = new ArrayList<>();
+
+        if (customers != null) {
+            for (Customer c : customers) {
+                //Concerting each customer from the inserted customers list to dto customer object
+                CustomerDto customerDto = customerToCustomerDto(c);
+                //Adding the converted customer to list of dto customers
+                dtoList.add(customerDto);
+            }
+        }
+        return dtoList;
     }
 
 }

@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static com.or.couponsproject.couponsproject.constants.Constants.ZERO;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -50,14 +52,14 @@ public class CustomerService {
         }
 
         //Checking if the customer already purchased the current coupon
-        for (CouponDto c : getAllCouponsByCustomerId(customerID)) {
+        for (Coupon c : customerRepository.findById(customerID).get().getCoupons()) {
             if (Objects.equals(c.getId(), couponID)) {
                 throw new CouponAlreadyPurchased(EntityType.COUPON, currentCoupon, EntityType.CUSTOMER);
             }
         }
 
         //Checking if the coupon is not in stock
-        if (currentCoupon.getAmount() <= 0) {
+        if (currentCoupon.getAmount() <= ZERO) {
             throw new CouponNotInStock(EntityType.COUPON, currentCoupon);
         }
 
@@ -95,8 +97,8 @@ public class CustomerService {
                         getCouponsByCustomersId(customerId));
 
         //Checking if coupons are not exist
-        if (dtoCoupons == null) {
-            throw new EntityNotExistException(EntityType.COUPON, Constraint.ENTITY_NOT_EXISTS);
+        if (dtoCoupons.isEmpty()) {
+            throw new EntityNotExistException(EntityType.COUPON, Constraint.ENTITY_LIST_NOT_EXISTS);
         }
         return dtoCoupons;
     }
@@ -133,8 +135,8 @@ public class CustomerService {
         List<CouponDto> coupons = getAllCouponsByCustomerId(customerId);
 
         //Checking if the coupons are not exists
-        if (coupons == null) {
-            throw new EntityNotExistException(EntityType.COUPON, Constraint.ENTITY_NOT_EXISTS);
+        if (coupons.isEmpty()) {
+            throw new EntityNotExistException(EntityType.COUPON, Constraint.ENTITY_LIST_NOT_EXISTS);
         }
 
         //Checking for each coupon if it is from same category
@@ -157,8 +159,8 @@ public class CustomerService {
         List<CouponDto> couponsByMax = getAllCouponsByCustomerId(customerId);
 
         //Checking if the coupons are not exists
-        if (couponsByMax == null) {
-            throw new EntityNotExistException(EntityType.COUPON, Constraint.ENTITY_NOT_EXISTS);
+        if (couponsByMax.isEmpty()) {
+            throw new EntityNotExistException(EntityType.COUPON, Constraint.ENTITY_LIST_NOT_EXISTS);
         }
 
         //Checking for each coupon if it is according to inserted price

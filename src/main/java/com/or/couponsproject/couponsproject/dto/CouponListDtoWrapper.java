@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 @ToString
@@ -13,5 +14,5 @@ import java.util.List;
 @NoArgsConstructor
 public class CouponListDtoWrapper {
 
-    private List<CouponDto> couponDtoList;
+        private List<CouponDto> couponDtoList;
 }

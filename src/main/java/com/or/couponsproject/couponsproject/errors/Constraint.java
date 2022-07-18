@@ -12,6 +12,8 @@ public enum Constraint {
 
     ENTITY_NOT_EXISTS(" is not exists!"),
 
+    ENTITY_LIST_NOT_EXISTS("S list is not exists!"),
+
     ENTITY_ALREADY_EXISTS(" is already exists!"),
 
     INVALID_INPUT_FORMAT("Invalid input - Please enter according to the correct format"),

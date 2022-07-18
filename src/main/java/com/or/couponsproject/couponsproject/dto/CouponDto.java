@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class CouponDto {
 
     private Long id;
-    private Long companyID;
+    private Long companyId;
     private CouponCategory category;
     private String title;
     private String description;

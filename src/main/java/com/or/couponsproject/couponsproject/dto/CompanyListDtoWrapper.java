@@ -1,10 +1,12 @@
 package com.or.couponsproject.couponsproject.dto;
 
+import com.or.couponsproject.couponsproject.model.Company;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -13,5 +15,5 @@ import java.util.Set;
 @NoArgsConstructor
 public class CompanyListDtoWrapper {
 
-    private Set<CompanyDto> companyDtoList;
+    private List<CompanyDto> companyDtoList;
 }

@@ -1,12 +1,16 @@
 package com.or.couponsproject.couponsproject.service;
 
+import com.or.couponsproject.couponsproject.dto.AdminDto;
 import com.or.couponsproject.couponsproject.dto.CompanyDto;
 import com.or.couponsproject.couponsproject.dto.CouponDto;
 import com.or.couponsproject.couponsproject.dto.CustomerDto;
 import com.or.couponsproject.couponsproject.enums.EntityType;
+import com.or.couponsproject.couponsproject.enums.Role;
 import com.or.couponsproject.couponsproject.errors.Constraint;
 import com.or.couponsproject.couponsproject.errors.exceptions.*;
+import com.or.couponsproject.couponsproject.model.Admin;
 import com.or.couponsproject.couponsproject.model.Customer;
+import com.or.couponsproject.couponsproject.repo.AdminRepository;
 import com.or.couponsproject.couponsproject.repo.CouponRepository;
 import com.or.couponsproject.couponsproject.repo.CustomerRepository;
 import com.or.couponsproject.couponsproject.util.ObjectMappingUtil;
@@ -28,6 +32,7 @@ public class AdminService {
     private final CompanyRepository companyRepository;
     private final CouponRepository couponRepository;
     private final CustomerRepository customerRepository;
+    private final AdminRepository adminRepository;
 
     //------------------------------------------Creating company---------------------------------------------------
 
@@ -47,12 +52,13 @@ public class AdminService {
             throw new EntityExistException(EntityType.COMPANY, Constraint.ENTITY_ALREADY_EXISTS);
         }
 
-        //Converting companyDto to spring company entity
-        Company company = ObjectMappingUtil.companyDtoToCompany(companyDto);
+        //Inserting to Company its Role once it's creating
+        companyDto.setRole(Role.COMPANY_ROLE);
 
+        //Converting companyDto to spring company entity
         //Creating the company entity
-        Company newCompany = companyRepository.save(company);
-        log.info("The new company: " + company.getName() + " has been created successfully!");
+        Company newCompany = companyRepository.save(ObjectMappingUtil.companyDtoToCompany(companyDto));
+        log.info("The new company: " + newCompany.getName() + " has been created successfully!");
 
         return newCompany;
     }
@@ -109,33 +115,22 @@ public class AdminService {
 
     //------------------------------------------Getting all companies----------------------------------------------
 
-    public Set<CompanyDto> getAllCompanies() throws ApplicationException {
+    public List<CompanyDto> getAllCompanies() throws ApplicationException {
 
-        //Setting and adding all companies in a list of companies
-        List<Company> companyList = new ArrayList<>(companyRepository.findAll());
-
-        Set<CompanyDto> dtoCompanies = new HashSet<>();
+        //Setting and adding all companies in a list of dto companies
+        List<CompanyDto> dtoCompanies = ObjectMappingUtil.companiesToCompaniesDto(companyRepository.findAll());
 
         //Checking if companies are not exist
-        if (companyList == null) {
-            throw new EntityNotExistException(EntityType.COMPANY, Constraint.ENTITY_NOT_EXISTS);
+        if (dtoCompanies.isEmpty()) {
+            throw new EntityNotExistException(EntityType.COMPANY, Constraint.ENTITY_LIST_NOT_EXISTS);
         }
 
-        //Transforming all companies to dto object and adding it to a set
-        for (Company c : companyList) {
-            CompanyDto companyDto = ObjectMappingUtil.companyToCompanyDto(c);
-            dtoCompanies.add(companyDto);
-        }
-
-        //Checking if dto companies are not exist
-        if (dtoCompanies == null) {
-            throw new EntityNotExistException(EntityType.COMPANY, Constraint.ENTITY_NOT_EXISTS);
-        }
         for (CompanyDto companyDto : dtoCompanies) {
-            //Setting to every customer its coupons
+            //Setting to every company its coupons
             companyDto.setCoupons(getCompany(companyDto.getId()).getCoupons());
         }
         return dtoCompanies;
+
     }
     //------------------------------------------Getting a company--------------------------------------------------
 
@@ -152,9 +147,7 @@ public class AdminService {
         //Setting the company coupons list from our database
         company.setCoupons(couponRepository.getCouponsByCompanyId(companyId));
 
-        List<CouponDto> dtoCoupons;
-
-        dtoCoupons = ObjectMappingUtil.couponsToCouponsDto(company.getCoupons());
+        List<CouponDto> dtoCoupons = ObjectMappingUtil.couponsToCouponsDto(company.getCoupons());
 
         //Converting company to companyDto entity
         CompanyDto companyDto = ObjectMappingUtil.companyToCompanyDto(company);
@@ -180,11 +173,12 @@ public class AdminService {
             throw new EmailAlreadyInUse(Constraint.ENTITY_ALREADY_EXISTS);
         }
 
-        //Converting customerDto to spring customer entity
-        Customer customer = ObjectMappingUtil.customerDtoToCustomer(customerDto);
+        //Inserting to Customer his Role once it's creating
+        customerDto.setRole(Role.CUSTOMER_ROLE);
 
+        //Converting customerDto to spring customer entity
         //Creating the customer entity
-        Customer newCustomer = customerRepository.save(customer);
+        Customer newCustomer = customerRepository.save(ObjectMappingUtil.customerDtoToCustomer(customerDto));
         log.info("The new customer: " + newCustomer.getFirstName() + " " + newCustomer.getLastName() +
                 " has been created successfully!");
 
@@ -234,22 +228,14 @@ public class AdminService {
 
     //------------------------------------------Getting all customers-----------------------------------------------
 
-    public Set<CustomerDto> getAllCustomers() throws ApplicationException {
+        public List<CustomerDto> getAllCustomers() throws ApplicationException {
 
-        //Setting and adding all companies in a list of companies
-        List<Customer> customerList = new ArrayList<>(customerRepository.findAll());
-
-        Set<CustomerDto> dtoCustomers = new HashSet<>();
-
-        //Transforming all customers to dto object and adding it to a set
-        for (Customer c : customerList) {
-            CustomerDto customerDto = ObjectMappingUtil.customerToCustomerDto(c);
-            dtoCustomers.add(customerDto);
-        }
+        //Setting and adding all companies in a list of dto customers
+        List<CustomerDto> dtoCustomers = ObjectMappingUtil.customersToCustomersDto(customerRepository.findAll());
 
         //Checking if customers are not exist
-        if (dtoCustomers == null) {
-            throw new EntityNotExistException(EntityType.CUSTOMER, Constraint.ENTITY_NOT_EXISTS);
+        if (dtoCustomers.isEmpty()) {
+            throw new EntityNotExistException(EntityType.CUSTOMER, Constraint.ENTITY_LIST_NOT_EXISTS);
         }
         return dtoCustomers;
     }
@@ -270,6 +256,30 @@ public class AdminService {
         CustomerDto customerDto = ObjectMappingUtil.customerToCustomerDto(customer);
 
         return customerDto;
+    }
+
+    public Admin createAdmin(final AdminDto adminDto) throws ApplicationException {
+
+        //Checking if hashed password address is valid according to password REGEX
+        //Checking if email address is valid according to Email REGEX
+        if (!InputUserValidation.isPasswordValid(adminDto.getPassword())
+                || !InputUserValidation.isEmailValid(adminDto.getEmail())) {
+            throw new UserValidationException(Constraint.INVALID_INPUT_FORMAT);
+        }
+
+        //Checking if email of exists admin is already in use
+        if (customerRepository.existsByEmail(adminDto.getEmail())) {
+            throw new EmailAlreadyInUse(Constraint.ENTITY_ALREADY_EXISTS);
+        }
+
+        //Inserting to Admin his Role once it's creating
+        adminDto.setRole(Role.ADMIN_ROLE);
+
+        //Converting and creating adminDto to spring admin entity
+        Admin admin = adminRepository.save(ObjectMappingUtil.adminDtoToEntity(adminDto));
+        log.info("The admin has been created successfully!");
+
+        return admin;
     }
 }
 

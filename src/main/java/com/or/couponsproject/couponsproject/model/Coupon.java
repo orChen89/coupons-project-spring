@@ -19,19 +19,6 @@ import java.util.List;
 @AllArgsConstructor
 public class Coupon {
 
-    public Coupon(Company company, CouponCategory category, String title, String description,
-                  LocalDate startDate, LocalDate endDate, int amount, double price, String image) {
-        this.company = company;
-        this.category = category;
-        this.title = title;
-        this.description = description;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.amount = amount;
-        this.price = price;
-        this.image = image;
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
