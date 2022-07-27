@@ -1,5 +1,6 @@
 package com.or.couponsproject.couponsproject.security;
 
+import com.or.couponsproject.couponsproject.dto.UserDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -35,9 +36,10 @@ public class JwtUtil {
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
     }
 
-    public static String generateToken(final String email) {
+    public static String generateToken(final UserDto user) {
         final Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, email);
+        claims.put("user", user);
+        return createToken(claims, user.getEmail());
     }
 
     private static String createToken(final Map<String, Object> claims, final String subject) {

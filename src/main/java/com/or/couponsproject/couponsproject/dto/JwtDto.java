@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class JwtDto {
 
+    //Returning a string of jwt token
     private String jwt;
 }

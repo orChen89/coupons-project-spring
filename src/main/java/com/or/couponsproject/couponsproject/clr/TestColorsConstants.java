@@ -10,6 +10,6 @@ public class TestColorsConstants {
     public static final String ANSI_RED = "\u001B[31m";
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_BLACK = "\u001B[30m";
-    public static final String ANSI_RED_BACKGROUND = "\u001B[41m";
+    public static final String ANSI_PINK_BACKGROUND = "\u001B[41m";
     public static final String ANSI_YELLOW_BACKGROUND = "\u001B[43m";
 }

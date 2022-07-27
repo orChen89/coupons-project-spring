@@ -28,7 +28,6 @@ public class ObjectMappingUtil {
 
         //Converting a coupon dto object to coupon object
         return Coupon.builder().
-                id(dto.getId()).
                 company(Company.builder().id(dto.getCompanyId()).build()).
                 title(dto.getTitle()).
                 category(dto.getCategory()).
@@ -43,7 +42,7 @@ public class ObjectMappingUtil {
 
     public static Coupon couponDtoToCouponUpdate(final CouponDto dto) {
 
-        //Converting a coupon dto object to coupon object
+        //Converting a coupon dto object to coupon object and forcing entering id when performing update
         return Coupon.builder().
                 id(dto.getId()).
                 company(Company.builder().id(dto.getCompanyId()).build()).
@@ -71,12 +70,24 @@ public class ObjectMappingUtil {
 
     public static Company companyDtoToCompanyUpdate(final CompanyDto dto) {
 
-        //Converting a company dto object to company object when performing an update operation
+        //Converting a company dto object to company object and forcing entering id when performing update
         return Company.builder().
                 id(dto.getId()).
                 name(dto.getName()).
                 email(dto.getEmail()).
                 password(dto.getPassword().hashCode()).
+                role(dto.getRole()).
+                build();
+    }
+
+    public static Company companyDtoToCompanyUpdateWhenNoPass(final CompanyDto dto) {
+
+        //Converting a company dto object to company object when performing an update operation with no password
+        return Company.builder().
+                id(dto.getId()).
+                name(dto.getName()).
+                email(dto.getEmail()).
+                password(Integer.valueOf(dto.getPassword())).
                 role(dto.getRole()).
                 build();
     }
@@ -95,13 +106,26 @@ public class ObjectMappingUtil {
 
     public static Customer customerDtoToCustomerUpdate(final CustomerDto dto) {
 
-        //Converting a customer dto object to customer object when performing an update operation
+        //Converting a customer dto object to customer object and forcing entering id when performing update
         return Customer.builder().
                 id(dto.getId()).
                 firstName(dto.getFirstName()).
                 lastName(dto.getLastName()).
                 email(dto.getEmail()).
                 password(dto.getPassword().hashCode()).
+                role(dto.getRole()).
+                build();
+    }
+
+    public static Customer customerDtoToCustomerUpdateWhenNoPass(final CustomerDto dto) {
+
+        //Converting a customer dto object to customer object when performing an update operation with no password
+        return Customer.builder().
+                id(dto.getId()).
+                firstName(dto.getFirstName()).
+                lastName(dto.getLastName()).
+                email(dto.getEmail()).
+                password(Integer.valueOf(dto.getPassword())).
                 role(dto.getRole()).
                 build();
     }
@@ -207,6 +231,47 @@ public class ObjectMappingUtil {
             }
         }
         return dtoList;
+    }
+
+    //This method is setting a coupon when performing a coupon update once not entering coupon parameters
+    public static CouponDto mappingCouponWhenUpdate(final CouponDto couponDto, final Coupon coupon) {
+
+        if (couponDto.getTitle() == null) {
+            couponDto.setTitle(coupon.getTitle());
+        }
+
+        if (couponDto.getPrice() == null) {
+            couponDto.setPrice(coupon.getPrice());
+        }
+
+        if (couponDto.getCategory() == null) {
+            couponDto.setCategory(coupon.getCategory());
+        }
+
+        if (couponDto.getStartDate() == null) {
+            couponDto.setStartDate(coupon.getStartDate());
+        }
+
+        if (couponDto.getAmount() == null) {
+            couponDto.setAmount(coupon.getAmount());
+        }
+
+        if (couponDto.getEndDate() == null) {
+            couponDto.setEndDate(coupon.getEndDate());
+        }
+
+        if (couponDto.getDescription() == null) {
+            couponDto.setDescription(coupon.getDescription());
+        }
+
+        if (couponDto.getCompanyId() == null) {
+            couponDto.setCompanyId(coupon.getCompany().getId());
+        }
+
+        if (couponDto.getImage() == null) {
+            couponDto.setImage(coupon.getImage());
+        }
+        return couponDto;
     }
 
 }

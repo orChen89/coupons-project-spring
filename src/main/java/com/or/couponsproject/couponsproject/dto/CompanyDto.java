@@ -3,9 +3,7 @@ package com.or.couponsproject.couponsproject.dto;
 import com.or.couponsproject.couponsproject.enums.Role;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @ToString(exclude = "password")

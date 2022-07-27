@@ -33,27 +33,27 @@ public class CustomerService {
 
     //------------------------------------------Creating new purchase------------------------------------------------
 
-    public Customer addCouponPurchase(final Long customerID, final Long couponID) throws ApplicationException {
-
-        //Setting the specific customer
-        Customer currentCustomer = OptionalToEntityConvertorUtil.optionalCustomer(customerRepository.findById(customerID));
-
-        //Setting the specific coupon
-        Coupon currentCoupon = OptionalToEntityConvertorUtil.optionalCoupon(couponRepository.findById(couponID));
+    public Customer addCouponPurchase(final Long customerId, final Long couponId) throws ApplicationException {
 
         //Checking if the customer is not exist
-        if (currentCustomer == null) {
+        if (!customerRepository.existsById(customerId)) {
             throw new EntityNotExistException(EntityType.CUSTOMER, Constraint.ENTITY_NOT_EXISTS);
         }
 
         //Checking if the coupon is not exist
-        if (currentCoupon == null) {
+        if (!couponRepository.existsById(couponId)) {
             throw new EntityNotExistException(EntityType.COUPON, Constraint.ENTITY_NOT_EXISTS);
         }
 
+        //Setting the specific customer
+        Customer currentCustomer = OptionalToEntityConvertorUtil.optionalCustomer(customerRepository.findById(customerId));
+
+        //Setting the specific coupon
+        Coupon currentCoupon = OptionalToEntityConvertorUtil.optionalCoupon(couponRepository.findById(couponId));
+
         //Checking if the customer already purchased the current coupon
-        for (Coupon c : customerRepository.findById(customerID).get().getCoupons()) {
-            if (Objects.equals(c.getId(), couponID)) {
+        for (Coupon c : currentCustomer.getCoupons()) {
+            if (Objects.equals(c.getId(), couponId)) {
                 throw new CouponAlreadyPurchased(EntityType.COUPON, currentCoupon, EntityType.CUSTOMER);
             }
         }
@@ -69,7 +69,7 @@ public class CustomerService {
         }
 
         //Getting the customer's coupons
-        List<Coupon> updatedCustomerCoupons = couponRepository.getCouponsByCustomersId(customerID);
+        List<Coupon> updatedCustomerCoupons = couponRepository.getCouponsByCustomersId(customerId);
 
         //Decreasing coupon amount
         CouponUtil.decreaseCouponAmount(currentCoupon);
@@ -80,9 +80,9 @@ public class CustomerService {
         //Creating a new coupon purchase with updated info
         customerRepository.save(currentCustomer);
 
-        log.info("The coupon: " + "~" + currentCoupon.getTitle() + "~" + " with id: " + couponID + "," +
+        log.info("The coupon: " + "~" + currentCoupon.getTitle() + "~" + " with id: " + couponId + "," +
                 " has been purchased by customer: " + "~" + currentCustomer.getFirstName() + " " +
-                currentCustomer.getLastName() + "~" + " with id: " + customerID);
+                currentCustomer.getLastName() + "~" + " with id: " + customerId);
 
         return currentCustomer;
     }
@@ -107,27 +107,24 @@ public class CustomerService {
 
     public CustomerDto getCustomer(final Long customerId) throws ApplicationException {
 
-        //Setting a specific customer
-        CustomerDto customerDto = ObjectMappingUtil.
-                customerToCustomerDto(OptionalToEntityConvertorUtil.
-                        optionalCustomer(customerRepository.findById(customerId)));
-
         //Checking if the customer is not exists
-        if (customerDto == null) {
+        if(!customerRepository.existsById(customerId)) {
+
             throw new EntityNotExistException(EntityType.CUSTOMER, Constraint.ENTITY_NOT_EXISTS);
         }
-        return customerDto;
+
+        //Setting a specific customer and returning it
+        return ObjectMappingUtil.
+                customerToCustomerDto(OptionalToEntityConvertorUtil.
+                        optionalCustomer(customerRepository.findById(customerId)));
     }
 
     //-----------------------------------Getting all coupons by category-------------------------------------------
 
     public List<CouponDto> getCouponsByCategory(final Long customerId, final CouponCategory category) throws ApplicationException {
 
-        //Setting a specific customer
-        Customer customer = OptionalToEntityConvertorUtil.optionalCustomer(customerRepository.findById(customerId));
-
         //Checking if the customer is not exists
-        if(customer == null) {
+        if(!customerRepository.existsById(customerId)) {
             throw new EntityNotExistException(EntityType.CUSTOMER, Constraint.ENTITY_NOT_EXISTS);
         }
 

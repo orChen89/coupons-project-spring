@@ -81,19 +81,35 @@ public class AdminService {
         String companyName = OptionalToEntityConvertorUtil.
                 optionalCompany(companyRepository.findById(companyDto.getId())).getName();
 
-        //Checking if company's name is already exist in database
-        if (!companyDto.getName().equals(companyName)) {
-            throw new CompanyNameException(Constraint.ENTITY_NAME_EXISTS);
+        //Checking if company name has not entered and if not, setting the name from the existing one
+        if (companyDto.getName() != null) {
+            //Checking if company's name is already exist in database
+            if (!companyDto.getName().equals(companyName)) {
+                throw new CompanyNameException(Constraint.ENTITY_NAME_EXISTS);
+            }
+        } else {
+            companyDto.setName(companyName);
         }
 
-        //Converting the companyDto object to spring company entity
-        Company company = ObjectMappingUtil.companyDtoToCompanyUpdate(companyDto);
+        //Setting a role to company
+        companyDto.setRole(Role.COMPANY_ROLE);
 
-        //Updating the company
-        companyRepository.save(company);
-        log.info("Company: " + company.getName() + " has been updated and created successfully!");
+        //Checking if password hasn't entered and setting it to a company
+        if (companyDto.getPassword() == null) {
+            companyDto.setPassword(String.valueOf(getCompany(companyDto.getId()).getPassword()));
+            Company company = ObjectMappingUtil.companyDtoToCompanyUpdateWhenNoPass(companyDto);
+            //Updating the company
+            companyRepository.save(company);
+            log.info("Company: " + company.getName() + " has been updated successfully!");
+        } else {
+            //Converting the companyDto object to spring company entity
+            Company company = ObjectMappingUtil.companyDtoToCompanyUpdate(companyDto);
+
+            //Updating the company
+            companyRepository.save(company);
+            log.info("Company: " + company.getName() + " has been updated successfully!");
+        }
     }
-
     //------------------------------------------Deleting a company---------------------------------------------------
 
     public void deleteCompany(final Long companyId) throws ApplicationException {
@@ -136,13 +152,13 @@ public class AdminService {
 
     public CompanyDto getCompany(final Long companyId) throws ApplicationException {
 
-        //Setting a specific company to a variable
-        Company company = OptionalToEntityConvertorUtil.optionalCompany(companyRepository.findById(companyId));
-
         //Checking if the company is not exist
-        if (company == null) {
+        if(!companyRepository.existsById(companyId)){
             throw new EntityNotExistException(EntityType.COMPANY, Constraint.ENTITY_NOT_EXISTS);
         }
+
+        //Setting a specific company to a variable
+        Company company = OptionalToEntityConvertorUtil.optionalCompany(companyRepository.findById(companyId));
 
         //Setting the company coupons list from our database
         company.setCoupons(couponRepository.getCouponsByCompanyId(companyId));
@@ -199,13 +215,38 @@ public class AdminService {
             throw new EntityNotExistException(EntityType.CUSTOMER, Constraint.ENTITY_NOT_EXISTS);
         }
 
-        //Converting the customerDto object to spring customer entity
-        Customer customer = ObjectMappingUtil.customerDtoToCustomerUpdate(customerDto);
+        //Getting a customer from the database and setting him in a variable
+        Customer customer = OptionalToEntityConvertorUtil.optionalCustomer(customerRepository.findById(customerDto.getId()));
 
-        //Updating the specific customer
-        customerRepository.save(customer);
+        //Checking if first name hasn't entered and setting it to a customer
+        if (customerDto.getFirstName() == null) {
+            customerDto.setFirstName(customer.getFirstName());
+        }
 
-        log.info("The customer has been updated and created successfully!");
+        //Checking if last name hasn't entered and setting it to a customer
+        if (customerDto.getLastName() == null) {
+            customerDto.setLastName(customer.getLastName());
+        }
+
+        //Inserting to Customer his Role
+        customerDto.setRole(Role.CUSTOMER_ROLE);
+
+        //Checking if password hasn't entered and setting it to a customer
+        if (customerDto.getPassword() == null) {
+            customerDto.setPassword(String.valueOf(customer.getPassword()));
+            Customer newCustomer = ObjectMappingUtil.customerDtoToCustomerUpdateWhenNoPass(customerDto);
+
+            //Updating the customer
+            customerRepository.save(newCustomer);
+            log.info("The customer, " + newCustomer.getFirstName() + " has been updated successfully!");
+        } else {
+            //Converting the customerDto object to spring customer entity
+            Customer newCustomer = ObjectMappingUtil.customerDtoToCustomerUpdate(customerDto);
+
+            //Updating the customer
+            customerRepository.save(newCustomer);
+            log.info("The customer, " + newCustomer.getFirstName() + " has been updated successfully!");
+        }
     }
 
     //------------------------------------------Deleting a customer--------------------------------------------------
@@ -244,21 +285,19 @@ public class AdminService {
 
     public CustomerDto getCustomer(final Long customerId) throws ApplicationException {
 
+        //Checking if the customer is not exist
+        if (!customerRepository.existsById(customerId)) {
+            throw new EntityNotExistException(EntityType.CUSTOMER, Constraint.ENTITY_NOT_EXISTS);
+        }
         //Setting a specific customer to a variable
         Customer customer = OptionalToEntityConvertorUtil.optionalCustomer(customerRepository.findById(customerId));
 
-        //Checking if the customer is not exist
-        if (customer == null) {
-            throw new EntityNotExistException(EntityType.CUSTOMER, Constraint.ENTITY_NOT_EXISTS);
-        }
-
         //Converting customer to customerDto entity
-        CustomerDto customerDto = ObjectMappingUtil.customerToCustomerDto(customer);
 
-        return customerDto;
+        return ObjectMappingUtil.customerToCustomerDto(customer);
     }
 
-    public Admin createAdmin(final AdminDto adminDto) throws ApplicationException {
+    public AdminDto createAdmin(final AdminDto adminDto) throws ApplicationException {
 
         //Checking if hashed password address is valid according to password REGEX
         //Checking if email address is valid according to Email REGEX
@@ -276,10 +315,10 @@ public class AdminService {
         adminDto.setRole(Role.ADMIN_ROLE);
 
         //Converting and creating adminDto to spring admin entity
-        Admin admin = adminRepository.save(ObjectMappingUtil.adminDtoToEntity(adminDto));
+        adminRepository.save(ObjectMappingUtil.adminDtoToEntity(adminDto));
         log.info("The admin has been created successfully!");
 
-        return admin;
+         return adminDto;
     }
 }
 

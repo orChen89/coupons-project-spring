@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.List;
-import java.util.Set;
 
 @Data
 @ToString
@@ -14,5 +13,6 @@ import java.util.Set;
 @NoArgsConstructor
 public class CustomerListDtoWrapper {
 
+    //Returning a list of customers as an object
     private List<CustomerDto> customerDtoList;
 }

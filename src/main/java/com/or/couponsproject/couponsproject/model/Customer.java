@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.util.List;
 
 @Data
-@ToString
+@ToString(exclude = "password")
 @Entity
 @Builder
 @Table(name = "customers")

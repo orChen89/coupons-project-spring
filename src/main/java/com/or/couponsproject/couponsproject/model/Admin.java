@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 
 @Data
-@ToString
+@ToString(exclude = "password")
 @Entity
 @Builder
 @Table(name = "admin")

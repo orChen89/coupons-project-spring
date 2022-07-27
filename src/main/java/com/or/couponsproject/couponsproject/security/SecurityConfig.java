@@ -28,7 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring().antMatchers("/v2/api-docs",
                 "/configuration/ui",
                 "/swagger-resources/**",
@@ -41,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
          http.csrf().disable().
                  authorizeHttpRequests().
-                 antMatchers("/login").permitAll().
+                 antMatchers("/auth/**").permitAll().
                  antMatchers("/admin/**").hasAnyAuthority("ADMIN_ROLE").
                  antMatchers("/company/**").hasAnyAuthority("COMPANY_ROLE", "ADMIN_ROLE").
                  antMatchers("/customer/**").hasAnyAuthority("CUSTOMER_ROLE", "ADMIN_ROLE").

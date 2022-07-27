@@ -18,10 +18,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,14 +34,6 @@ public class CompanyService {
 //-------------------------------------Creating a new coupon--------------------------------------------------
 
     public Coupon createCoupon(final CouponDto couponDto) throws ApplicationException {
-
-        //Checking if the specific coupon is already exist to current company
-        for (Coupon c : couponRepository.findAll()) {
-            if (c.getTitle().equals(couponDto.getTitle()) &&
-                    Objects.equals(c.getCompany().getId(), couponDto.getCompanyId())) {
-                throw new EntityExistException(EntityType.COUPON, Constraint.ENTITY_ALREADY_EXISTS);
-            }
-        }
 
         //Checking if the date format is valid according to Date REGEX
         if (!InputUserValidation.isDateValid((couponDto.getStartDate()))
@@ -60,23 +51,22 @@ public class CompanyService {
             throw new EndDateBeforeStartDateException(Constraint.START_DATE_AT_OR_BEFORE_END_DATE);
         }
 
+        //Checking if the specific coupon is already exist to current company
+        if (couponRepository.existsByTitle(couponDto.getTitle())) {
+            List<Coupon> couponList = couponRepository.findByTitle(couponDto.getTitle());
+            for (Coupon c : couponList) {
+                if (c.getTitle().equals(couponDto.getTitle()) &&
+                        Objects.equals(c.getCompany().getId(), couponDto.getCompanyId())) {
+                    throw new EntityExistException(EntityType.COUPON, Constraint.ENTITY_ALREADY_EXISTS);
+                }
+            }
+        }
+
         //Converting couponDto to spring coupon entity
         //Creating the coupon entity on our database
         Coupon coupon = couponRepository.save(ObjectMappingUtil.couponDtoToCoupon(couponDto));
 
         log.info("The new coupon: " + coupon.getTitle() + " has been created successfully!");
-
-        //Setting a company object to a variable
-        Company company = OptionalToEntityConvertorUtil.
-                optionalCompany(companyRepository.
-                        findById(coupon.
-                                getCompany().
-                                getId()));
-
-        List<Coupon> companyCoupons = new ArrayList<>();
-        //Adding and setting the company coupons
-        companyCoupons.add(coupon);
-        company.setCoupons(companyCoupons);
 
         return coupon;
     }
@@ -84,6 +74,8 @@ public class CompanyService {
     //-------------------------------------Updating an existing coupon----------------------------------------------
 
     public void updateCoupon(final CouponDto couponDto) throws ApplicationException {
+
+        Coupon coupon = OptionalToEntityConvertorUtil.optionalCoupon(couponRepository.findById(couponDto.getId()));
 
         //Checking if user didn't enter id - Incorrect Update format
         if (couponDto.getId() == null) {
@@ -94,6 +86,8 @@ public class CompanyService {
         if (couponDto == null) {
             throw new EntityNotExistException(EntityType.COUPON, Constraint.ENTITY_NOT_EXISTS);
         }
+
+        CouponDto newCoupon = ObjectMappingUtil.mappingCouponWhenUpdate(couponDto, coupon);
 
         //Checking if the date format is valid according to Date REGEX
         if (!InputUserValidation.isDateValid((couponDto.getStartDate()))
@@ -113,8 +107,8 @@ public class CompanyService {
 
         //Converting the couponDto object to spring coupon entity
         //Updating the coupon
-        Coupon coupon = couponRepository.save(ObjectMappingUtil.couponDtoToCouponUpdate(couponDto));
-        log.info("The selected coupon: " + coupon.getTitle() + " has been updated and created successfully!");
+        couponRepository.save(ObjectMappingUtil.couponDtoToCouponUpdate(newCoupon));
+        log.info("The selected coupon: " + newCoupon.getTitle() + " has been updated and created successfully!");
     }
 
     //-------------------------------------Deleting an existing coupon----------------------------------------------
@@ -142,49 +136,40 @@ public class CompanyService {
 
     public CouponDto getCoupon(final Long couponId) throws ApplicationException {
 
-        //Setting a coupon according to the coupon id
-        Coupon coupon = OptionalToEntityConvertorUtil.optionalCoupon(couponRepository.findById(couponId));
-
         //Checking if the coupon is not exists
-        if (coupon == null) {
+        if (!couponRepository.existsById(couponId)) {
             throw new EntityNotExistException(EntityType.COUPON, Constraint.ENTITY_NOT_EXISTS);
         }
 
-        //Converting a coupon to a couponDto entity
-        CouponDto couponDto = ObjectMappingUtil.couponToCouponDto(coupon);
+        //Setting a coupon according to the coupon id
+        Coupon coupon = OptionalToEntityConvertorUtil.optionalCoupon(couponRepository.findById(couponId));
 
+        //Converting a coupon to a couponDto entity
         //Getting the specific coupon
-        return couponDto;
+        return ObjectMappingUtil.couponToCouponDto(coupon);
     }
 
     //-------------------------------------Getting all coupons------------------------------------------------------
 
     public List<CouponDto> getAllCoupons(final Long companyId) throws ApplicationException {
 
-        //Setting a company according to the company id
-        Company company = OptionalToEntityConvertorUtil.optionalCompany(companyRepository.findById(companyId));
-
         //Checking if the specific company is not exists
-        if (company == null) {
+        if (!companyRepository.existsById(companyId)) {
             throw new EntityNotExistException(EntityType.COMPANY, Constraint.ENTITY_NOT_EXISTS);
         }
 
         //Setting the specific company its coupons by id
         //Converting the coupons to a Dto coupon list
-        List<CouponDto> companyDtoCoupons = ObjectMappingUtil.couponsToCouponsDto(couponRepository.getCouponsByCompanyId(companyId));
-
-        return companyDtoCoupons;
+        return ObjectMappingUtil.couponsToCouponsDto(couponRepository.getCouponsByCompanyId(companyId));
     }
 
     //-------------------------------------Getting all coupons by specific category---------------------------------
 
     public List<CouponDto> getCouponsByCategory(final Long companyId, final CouponCategory category) throws ApplicationException {
 
-        //Setting a specific company
-        Company company = OptionalToEntityConvertorUtil.optionalCompany(companyRepository.findById(companyId));
 
-        //Checking if company is not exists
-        if (company == null) {
+        //Checking if the specific company is not exists
+        if (!companyRepository.existsById(companyId)) {
             throw new EntityNotExistException(EntityType.COMPANY, Constraint.ENTITY_NOT_EXISTS);
         }
 
@@ -207,11 +192,8 @@ public class CompanyService {
 
     public List<CouponDto> getCouponsByMaxPrice(final Long companyId, final double maxPrice) throws ApplicationException {
 
-        //Setting a specific company
-        Company company = OptionalToEntityConvertorUtil.optionalCompany(companyRepository.findById(companyId));
-
-        //Checking if company is not exists
-        if (company == null) {
+        //Checking if the specific company is not exists
+        if (!companyRepository.existsById(companyId)) {
             throw new EntityNotExistException(EntityType.COMPANY, Constraint.ENTITY_NOT_EXISTS);
         }
 
@@ -234,16 +216,13 @@ public class CompanyService {
 
     public CompanyDto getCompany(final Long companyId) throws ApplicationException {
 
-        //Setting a specific company
-        Company company = OptionalToEntityConvertorUtil.optionalCompany(companyRepository.findById(companyId));
-
-        //Checking if the company is not exists
-        if (company == null) {
+        //Checking if the specific company is not exists
+        if (!companyRepository.existsById(companyId)) {
             throw new EntityNotExistException(EntityType.COMPANY, Constraint.ENTITY_NOT_EXISTS);
         }
 
-        //Setting the company coupons list from our database
-        company.setCoupons(couponRepository.getCouponsByCompanyId(companyId));
+        //Setting a specific company
+        Company company = OptionalToEntityConvertorUtil.optionalCompany(companyRepository.findById(companyId));
 
         List<CouponDto> dtoCoupons = ObjectMappingUtil.couponsToCouponsDto(company.getCoupons());
 

@@ -38,7 +38,7 @@ public class CompanyController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("{couponId}")
+    @GetMapping("/coupon/{couponId}")
     public CouponDto getCoupon(@PathVariable final long couponId) throws ApplicationException {
         return companyService.getCoupon(couponId);
     }
@@ -66,7 +66,7 @@ public class CompanyController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/get/{companyId}")
+    @GetMapping("{companyId}")
     public CompanyDto getCompany(@PathVariable final long companyId) throws ApplicationException {
         return companyService.getCompany(companyId);
     }

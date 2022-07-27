@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 @Data
-@ToString
+@ToString(exclude = "password")
 @Entity
 @Table(name = "companies")
 @Builder

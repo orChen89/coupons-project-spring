@@ -1,5 +1,6 @@
 package com.or.couponsproject.couponsproject.security;
 
+import com.or.couponsproject.couponsproject.constants.Constants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,8 +21,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final CustomUserDetailsService customUserDetailsService;
 
-    private static final String BEARER_AUTH_SCHEME_START = "Bearer ";
-    private static final int TOKEN_START_INDEX = 7;
+
 
     @Override
     protected void doFilterInternal(
@@ -29,18 +29,21 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         final String authorizationHeader = request.getHeader("Authorization");
 
-        if (authorizationHeader != null && authorizationHeader.startsWith(BEARER_AUTH_SCHEME_START)) {
-            final String jwt = authorizationHeader.substring(TOKEN_START_INDEX);
+        //Checking if header is set with key and value of Bearer and getting the specific email
+        if (authorizationHeader != null && authorizationHeader.startsWith(Constants.BEARER_AUTH_SCHEME_START)) {
+            final String jwt = authorizationHeader.substring(Constants.TOKEN_START_INDEX);
             final String email = JwtUtil.extractEmail(jwt);
 
+            //Checking if email is not null and loading a specific user according to the email
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 final UserDetails userDetails = this.customUserDetailsService.loadUserByUsername(email);
 
+                //Checking if token is valid according to specific user and getting auth of user
                 if (JwtUtil.validateToken(jwt, userDetails)) {
                     UsernamePasswordAuthenticationToken upaToken = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities()
                     );
-
+                    //Setting Authentication with request and token of user
                     upaToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(upaToken);
                 }
@@ -49,5 +52,4 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
-
 }

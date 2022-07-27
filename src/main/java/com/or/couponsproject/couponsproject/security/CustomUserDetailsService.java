@@ -1,6 +1,5 @@
 package com.or.couponsproject.couponsproject.security;
 
-
 import com.or.couponsproject.couponsproject.model.Admin;
 import com.or.couponsproject.couponsproject.model.Company;
 import com.or.couponsproject.couponsproject.model.Customer;
@@ -26,11 +25,13 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final CustomerRepository customerRepository;
     private final AdminRepository adminRepository;
 
+    //Returning a user according to user's email from the method below
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return getUser(email);
     }
 
+    //Getting a specific user according to user's email & a specific role by adding the role to the user
     private User getUser(String email) {
 
         if (companyRepository.existsByEmail(email)) {
