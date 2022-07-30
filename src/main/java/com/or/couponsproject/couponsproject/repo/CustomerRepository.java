@@ -1,6 +1,5 @@
 package com.or.couponsproject.couponsproject.repo;
 
-import com.or.couponsproject.couponsproject.model.Coupon;
 import com.or.couponsproject.couponsproject.model.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

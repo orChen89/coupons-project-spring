@@ -1,9 +1,13 @@
 package com.or.couponsproject.couponsproject.util;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class InputUserValidation {
 
     private final static String PASSWORD_REGEX = "[a-zA-Z0-9]{4,12}";

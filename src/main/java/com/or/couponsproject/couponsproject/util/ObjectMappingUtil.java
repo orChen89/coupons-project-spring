@@ -8,10 +8,13 @@ import com.or.couponsproject.couponsproject.model.Admin;
 import com.or.couponsproject.couponsproject.model.Company;
 import com.or.couponsproject.couponsproject.model.Coupon;
 import com.or.couponsproject.couponsproject.model.Customer;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ObjectMappingUtil {
 
     public static Admin adminDtoToEntity(final AdminDto dto) {

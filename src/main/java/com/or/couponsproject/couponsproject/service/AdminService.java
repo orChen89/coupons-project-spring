@@ -8,7 +8,6 @@ import com.or.couponsproject.couponsproject.enums.EntityType;
 import com.or.couponsproject.couponsproject.enums.Role;
 import com.or.couponsproject.couponsproject.errors.Constraint;
 import com.or.couponsproject.couponsproject.errors.exceptions.*;
-import com.or.couponsproject.couponsproject.model.Admin;
 import com.or.couponsproject.couponsproject.model.Customer;
 import com.or.couponsproject.couponsproject.repo.AdminRepository;
 import com.or.couponsproject.couponsproject.repo.CouponRepository;

@@ -21,7 +21,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final CustomUserDetailsService customUserDetailsService;
 
-
+    //This class configures the filter which checks if user are authenticated with token and if exists
 
     @Override
     protected void doFilterInternal(
@@ -35,6 +35,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             final String email = JwtUtil.extractEmail(jwt);
 
             //Checking if email is not null and loading a specific user according to the email
+            //Setting a user of spring from the database and return the user according to email
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 final UserDetails userDetails = this.customUserDetailsService.loadUserByUsername(email);
 

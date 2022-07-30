@@ -20,6 +20,9 @@ public class JwtService {
     private final CustomerRepository customerRepository;
     private final AdminRepository adminRepository;
 
+    //Loading a user according to its credentials from the database and checking according to his details
+    // and returns it into the jwt as a claim
+
     public UserDto loadUserByUsername(String email) throws UsernameNotFoundException {
         return getUser(email);
     }

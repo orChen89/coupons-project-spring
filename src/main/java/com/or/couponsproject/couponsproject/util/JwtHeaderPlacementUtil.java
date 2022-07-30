@@ -5,12 +5,13 @@ import com.or.couponsproject.couponsproject.constants.Constants;
 import com.or.couponsproject.couponsproject.dto.CouponDto;
 import com.or.couponsproject.couponsproject.dto.JwtDto;
 import com.or.couponsproject.couponsproject.dto.UserDto;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class JwtHeaderPlacementUtil {
 
     private final static HttpHeaders header = new HttpHeaders();

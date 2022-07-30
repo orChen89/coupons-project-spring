@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -167,25 +166,14 @@ public class CompanyService {
 
     public List<CouponDto> getCouponsByCategory(final Long companyId, final CouponCategory category) throws ApplicationException {
 
-
         //Checking if the specific company is not exists
         if (!companyRepository.existsById(companyId)) {
             throw new EntityNotExistException(EntityType.COMPANY, Constraint.ENTITY_NOT_EXISTS);
         }
 
-        //Setting the coupons of specific company
-        List<CouponDto> companyCoupons = getAllCoupons(companyId);
+        //Returning a list of coupons according to specific company and category
+        return ObjectMappingUtil.couponsToCouponsDto(couponRepository.findByCategoryAndCompanyId(category, companyId));
 
-        //Checking if the coupons are not exists
-        if (companyCoupons.isEmpty()) {
-            throw new EntityNotExistException(EntityType.COUPON, Constraint.ENTITY_LIST_NOT_EXISTS);
-        }
-
-        //Checking for each coupon if it is from same category
-        return companyCoupons.
-                stream().
-                filter(couponDto -> couponDto.getCategory().equals(category)).
-                collect(Collectors.toList());
     }
 
     //-------------------------------------Getting all coupons according to price----------------------------------

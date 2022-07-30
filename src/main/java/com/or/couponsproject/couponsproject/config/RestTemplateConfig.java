@@ -8,6 +8,8 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class RestTemplateConfig {
 
+    //Loading the required Beans to spring container --->
+
     //Returning a spring bean of rest template object
     @Bean
     public RestTemplate getRestTemplate() {

@@ -1,13 +1,14 @@
 package com.or.couponsproject.couponsproject.util;
 
 import com.or.couponsproject.couponsproject.model.Coupon;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 
 import static com.or.couponsproject.couponsproject.constants.Constants.REDUCE_AMOUNT_BY_ONE;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class CouponUtil {
 
     //This method is decreasing a specific coupon amount by 1

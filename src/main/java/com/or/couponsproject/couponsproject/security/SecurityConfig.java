@@ -22,11 +22,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtRequestFilter jwtRequestFilter;
 
+
+    //Confirming which service is relevant for security
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(customUserDetailsService);
     }
 
+    //Configuring and allowing which platforms and other operations can operate under the security
     @Override
     public void configure(WebSecurity web) {
         web.ignoring().antMatchers("/v2/api-docs",
@@ -37,6 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 "/webjars/**");
     }
 
+    //Configuring which permissions are allowed to every User or section according to specific role
     @Override
     protected void configure(HttpSecurity http) throws Exception {
          http.csrf().disable().
@@ -47,8 +51,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                  antMatchers("/customer/**").hasAnyAuthority("CUSTOMER_ROLE", "ADMIN_ROLE").
                  anyRequest().authenticated().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
+         //Sent directly into our jwt filter
          http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
+
+    //Loading the required Beans to spring container --->
 
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
