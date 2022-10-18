@@ -17,8 +17,8 @@ import java.util.function.Function;
 public class JwtUtil {
 
     private static final int ONE_HOUR_IN_MILLIS = 1000 * 60 * 60;
-    private static final String SECRET_KEY = "secret";
 
+    private static final String SECRET_KEY = "secret";
 
     public static String extractEmail(final String token) {
         return extractClaim(token, Claims::getSubject);
@@ -60,6 +60,7 @@ public class JwtUtil {
 
     //Checking if token has been expired
     private static boolean isTokenExpired(final String token) {
+
         return extractExpiration(token).before(new Date());
     }
 }

@@ -22,5 +22,5 @@ public class CouponDto {
     private LocalDate endDate;
     private Integer amount;
     private Double price;
-    private String image;
+    private String imageUrl;
 }

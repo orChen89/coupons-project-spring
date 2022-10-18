@@ -32,10 +32,6 @@ public class CustomerTest {
 
             System.err.println("Customer logging ---> ");
             customerLogin("shaul@gmail.com", "shaul88");
-//            System.err.println("Customer registration ---> ");
-//            customerRegister(CustomerDto.builder().firstName("Yoram").
-//                    lastName("Tahat").
-//                    email("Yoramt@gmail.com").password("66666").build());
             System.err.println("Coupon purchase ---> " + couponPurchase());
             System.err.println("Getting all customer coupons ---> " + getAllCustomerCoupons());
             System.err.println("Getting a customer ---> " + getCustomer());

@@ -1,9 +1,6 @@
 package com.or.couponsproject.couponsproject.util;
 
-import com.or.couponsproject.couponsproject.dto.AdminDto;
-import com.or.couponsproject.couponsproject.dto.CompanyDto;
-import com.or.couponsproject.couponsproject.dto.CouponDto;
-import com.or.couponsproject.couponsproject.dto.CustomerDto;
+import com.or.couponsproject.couponsproject.dto.*;
 import com.or.couponsproject.couponsproject.model.Admin;
 import com.or.couponsproject.couponsproject.model.Company;
 import com.or.couponsproject.couponsproject.model.Coupon;
@@ -39,7 +36,7 @@ public class ObjectMappingUtil {
                 endDate(dto.getEndDate()).
                 amount(dto.getAmount()).
                 price(dto.getPrice()).
-                image(dto.getImage()).
+                image(dto.getImageUrl()).
                 build();
     }
 
@@ -56,7 +53,7 @@ public class ObjectMappingUtil {
                 endDate(dto.getEndDate()).
                 amount(dto.getAmount()).
                 price(dto.getPrice()).
-                image(dto.getImage()).
+                image(dto.getImageUrl()).
                 build();
     }
 
@@ -173,11 +170,26 @@ public class ObjectMappingUtil {
                 endDate(coupon.getEndDate()).
                 amount(coupon.getAmount()).
                 price(coupon.getPrice()).
-                image(coupon.getImage()).
+                imageUrl(coupon.getImage()).
                 build();
     }
 
     public static List<CouponDto> couponsToCouponsDto(final List<Coupon> coupons) {
+
+        List<CouponDto> dtoList = new ArrayList<>();
+
+        if (coupons != null) {
+            for (Coupon c : coupons) {
+                //Concerting each coupon from the inserted coupons list to dto coupon object
+                CouponDto couponDto = couponToCouponDto(c);
+                //Adding the converted coupon to list of dto coupons
+                dtoList.add(couponDto);
+            }
+        }
+        return dtoList;
+    }
+
+    public static List<CouponDto> couponsToCouponsDtoWrapper(final List<Coupon> coupons) {
 
         List<CouponDto> dtoList = new ArrayList<>();
 
@@ -271,8 +283,8 @@ public class ObjectMappingUtil {
             couponDto.setCompanyId(coupon.getCompany().getId());
         }
 
-        if (couponDto.getImage() == null) {
-            couponDto.setImage(coupon.getImage());
+        if (couponDto.getImageUrl() == null) {
+            couponDto.setImageUrl(coupon.getImage());
         }
         return couponDto;
     }

@@ -142,7 +142,7 @@ public class ExceptionsTest {
                         endDate(LocalDate.of(2022, 9, 16)).
                         amount(100).
                         price(55.0).
-                        image("jdbc:mysql://localhost:3306/coupons_project/62").
+                        imageUrl("jdbc:mysql://localhost:3306/coupons_project/62").
                         build());
 
             } catch (ApplicationException e) {
@@ -165,7 +165,7 @@ public class ExceptionsTest {
                         endDate(LocalDate.of(2022, 8, 15)).
                         amount(4).
                         price(32.5).
-                        image("jdbc:mysql://localhost:3306/coupons_project/12").
+                        imageUrl("jdbc:mysql://localhost:3306/coupons_project/12").
                         build());
 
             } catch (ApplicationException e) {
@@ -188,7 +188,7 @@ public class ExceptionsTest {
                         endDate(LocalDate.of(2022, 4, 17)).
                         amount(9).
                         price(120.0).
-                        image("jdbc:mysql://localhost:3306/coupons_project/13").
+                        imageUrl("jdbc:mysql://localhost:3306/coupons_project/13").
                         build());
 
             } catch (ApplicationException e) {

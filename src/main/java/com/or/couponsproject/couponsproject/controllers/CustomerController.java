@@ -1,5 +1,6 @@
 package com.or.couponsproject.couponsproject.controllers;
 
+import com.or.couponsproject.couponsproject.dto.CouponDto;
 import com.or.couponsproject.couponsproject.dto.CouponListDtoWrapper;
 import com.or.couponsproject.couponsproject.dto.CustomerDto;
 import com.or.couponsproject.couponsproject.enums.CouponCategory;
@@ -13,15 +14,16 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("customer")
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin
 public class CustomerController {
 
     private final CustomerService customerService;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{customerId}/{couponId}")
-    public void createCouponPurchase(@PathVariable(name = "customerId") final long customerId,
-                                     @PathVariable(name = "couponId") final long couponId) throws ApplicationException {
-        customerService.addCouponPurchase(customerId, couponId);
+    public CouponDto createCouponPurchase(@PathVariable(name = "customerId") final long customerId,
+                                          @PathVariable(name = "couponId") final long couponId) throws ApplicationException {
+       return customerService.addCouponPurchase(customerId, couponId);
     }
 
     @ResponseStatus(HttpStatus.OK)

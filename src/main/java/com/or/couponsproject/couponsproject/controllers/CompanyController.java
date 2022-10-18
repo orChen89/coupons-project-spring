@@ -15,13 +15,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("company")
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin
 public class CompanyController {
 
     private final CompanyService companyService;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public CouponDto createCoupon(@RequestBody final CouponDto coupon) throws ApplicationException {
+    public CouponDto createCoupon(@RequestBody final CouponDto coupon ) throws ApplicationException {
        return ObjectMappingUtil.couponToCouponDto(companyService.createCoupon(coupon));
     }
 

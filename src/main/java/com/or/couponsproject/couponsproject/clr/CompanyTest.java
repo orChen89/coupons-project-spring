@@ -1,5 +1,4 @@
 package com.or.couponsproject.couponsproject.clr;
-
 import com.or.couponsproject.couponsproject.controllers.AuthController;
 import com.or.couponsproject.couponsproject.dto.*;
 import com.or.couponsproject.couponsproject.enums.CouponCategory;
@@ -35,8 +34,6 @@ public class CompanyTest {
 
             System.err.println("Company logging ---> ");
             companyLogin("kal@gmail.com", "kalev565");
-//            System.err.println("Company registration ---> ");
-//            companyRegister(CompanyDto.builder().name("Miki").email("mikush@gmail.com").password("12345").build());
             System.err.println("Creating coupons ---> " + createCoupons());
             System.err.println("Updating coupons ---> " + updateCoupon());
             System.err.println("Deleting a coupon ---> " + deleteCoupon());
@@ -118,7 +115,31 @@ public class CompanyTest {
                 endDate(LocalDate.of(2022, 12, 5)).
                 amount(2000).
                 price(50.0).
-                image("jdbc:mysql://localhost:3306/coupons_project/1").
+                imageUrl("https://www.dmu.ac.uk/webimages/DMU-students/Hot-topics/2021/June/covid-vaccine-main.jpg").
+                build();
+
+        CouponDto couponDto11 = CouponDto.builder().
+                companyId(2L).
+                category(CouponCategory.MEDICINE).
+                title("Hatelet").
+                description("Til!").
+                startDate(LocalDate.of(2022, 4, 5)).
+                endDate(LocalDate.of(2022, 12, 5)).
+                amount(150).
+                price(80.0).
+                imageUrl("https://www.dmu.ac.uk/webimages/DMU-students/Hot-topics/2021/June/covid-vaccine-main.jpg").
+                build();
+
+        CouponDto couponDto111 = CouponDto.builder().
+                companyId(2L).
+                category(CouponCategory.MEDICINE).
+                title("Esh").
+                description("Work!").
+                startDate(LocalDate.of(2022, 4, 5)).
+                endDate(LocalDate.of(2022, 12, 5)).
+                amount(700).
+                price(60.0).
+                imageUrl("https://www.dmu.ac.uk/webimages/DMU-students/Hot-topics/2021/June/covid-vaccine-main.jpg").
                 build();
 
         CouponDto couponDto2 = CouponDto.builder().
@@ -127,10 +148,10 @@ public class CompanyTest {
                 title("Jeans").
                 description("pants").
                 startDate(LocalDate.of(2022, 2, 28)).
-                endDate(LocalDate.of(2022, 8, 10)).
+                endDate(LocalDate.of(2022, 12, 10)).
                 amount(1).
                 price(78.5).
-                image("jdbc:mysql://localhost:3306/coupons_project/2").
+                imageUrl("https://media.glamour.com/photos/5d9f460e01ef71000961d240/master/w_1000,h_1250,c_limit/madewell.jpg").
                 build();
 
         CouponDto couponDto3 = CouponDto.builder().
@@ -139,10 +160,10 @@ public class CompanyTest {
                 title("Lamburger").
                 description("Til").
                 startDate(LocalDate.of(2022, 2, 28)).
-                endDate(LocalDate.of(2022, 8, 10)).
+                endDate(LocalDate.of(2022, 12, 10)).
                 amount(32).
                 price(70.5).
-                image("jdbc:mysql://localhost:3306/coupons_project/3").
+                imageUrl("https://media-cdn.tripadvisor.com/media/photo-s/17/3b/9a/d2/burger-king.jpg").
                 build();
 
         CouponDto couponDto4 = CouponDto.builder().
@@ -151,14 +172,16 @@ public class CompanyTest {
                 title("Orez").
                 description("Madhim").
                 startDate(LocalDate.of(2022, 4, 17)).
-                endDate(LocalDate.of(2022, 11, 22)).
-                amount(0).
+                endDate(LocalDate.of(2022, 11, 28)).
+                amount(5).
                 price(15.0).
-                image("jdbc:mysql://localhost:3306/coupons_project/20").
+                imageUrl("https://www.sugat.com/wp-content/uploads/2016/04/clasi5.jpg").
                 build();
 
 
         //Building a response entity of coupons and inserting the token to the request header and setting a body
+        ResponseEntity<CouponDto> newCoupon = JwtHeaderPlacementUtil.setHeaderToPostOrUpdateCoupon(jwt, couponDto11);
+        ResponseEntity<CouponDto> newCoupon0 = JwtHeaderPlacementUtil.setHeaderToPostOrUpdateCoupon(jwt, couponDto111);
         ResponseEntity<CouponDto> newCoupon1 = JwtHeaderPlacementUtil.setHeaderToPostOrUpdateCoupon(jwt, couponDto1);
         ResponseEntity<CouponDto> newCoupon2 = JwtHeaderPlacementUtil.setHeaderToPostOrUpdateCoupon(jwt, couponDto2);
         ResponseEntity<CouponDto> newCoupon3 = JwtHeaderPlacementUtil.setHeaderToPostOrUpdateCoupon(jwt, couponDto3);
@@ -168,8 +191,18 @@ public class CompanyTest {
 
                     restTemplate.postForEntity(
                             TestUrlConstants.POST_OR_UPDATE_COUPON_URL,
-                            newCoupon1,
+                            newCoupon,
                             CouponDto.class);
+
+            restTemplate.postForEntity(
+                    TestUrlConstants.POST_OR_UPDATE_COUPON_URL,
+                    newCoupon0,
+                    CouponDto.class);
+
+            restTemplate.postForEntity(
+                    TestUrlConstants.POST_OR_UPDATE_COUPON_URL,
+                    newCoupon1,
+                    CouponDto.class);
 
 
                     restTemplate.postForEntity(

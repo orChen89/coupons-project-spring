@@ -135,11 +135,6 @@ public class AdminService {
         //Setting and adding all companies in a list of dto companies
         List<CompanyDto> dtoCompanies = ObjectMappingUtil.companiesToCompaniesDto(companyRepository.findAll());
 
-        //Checking if companies are not exist
-        if (dtoCompanies.isEmpty()) {
-            throw new EntityNotExistException(EntityType.COMPANY, Constraint.ENTITY_LIST_NOT_EXISTS);
-        }
-
         for (CompanyDto companyDto : dtoCompanies) {
             //Setting to every company its coupons
             companyDto.setCoupons(getCompany(companyDto.getId()).getCoupons());
@@ -273,10 +268,6 @@ public class AdminService {
         //Setting and adding all companies in a list of dto customers
         List<CustomerDto> dtoCustomers = ObjectMappingUtil.customersToCustomersDto(customerRepository.findAll());
 
-        //Checking if customers are not exist
-        if (dtoCustomers.isEmpty()) {
-            throw new EntityNotExistException(EntityType.CUSTOMER, Constraint.ENTITY_LIST_NOT_EXISTS);
-        }
         return dtoCustomers;
     }
 

@@ -4,10 +4,6 @@ public class TestUrlConstants {
 
     public static final String POST_OR_UPDATE_COMPANY_BY_ADMIN_URL = "http://localhost:8080/admin/company";
 
-    public static final String REGISTER_COMPANY = "http://localhost:8080/auth/register/company";
-
-    public static final String REGISTER_CUSTOMER = "http://localhost:8080/auth/register/customer";
-
     public static final String LOGIN_USER = "http://localhost:8080/auth/login";
 
     public static final String COMPANY_DELETION_URL = "http://localhost:8080/admin/company/";

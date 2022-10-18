@@ -33,7 +33,7 @@ public class CustomerService {
 
     //------------------------------------------Creating new purchase------------------------------------------------
 
-    public Customer addCouponPurchase(final Long customerId, final Long couponId) throws ApplicationException {
+    public CouponDto addCouponPurchase(final Long customerId, final Long couponId) throws ApplicationException {
 
         //Checking if the customer is not exist
         if (!customerRepository.existsById(customerId)) {
@@ -84,22 +84,24 @@ public class CustomerService {
                 " has been purchased by customer: " + "~" + currentCustomer.getFirstName() + " " +
                 currentCustomer.getLastName() + "~" + " with id: " + customerId);
 
-        return currentCustomer;
+        return ObjectMappingUtil.couponToCouponDto(currentCoupon);
     }
 
     //--------------------------Getting all coupons of specific customer-------------------------------------------
 
     public List<CouponDto> getAllCouponsByCustomerId(final Long customerId) throws ApplicationException {
 
+        //Checking if Customer Id is not exists
+        if (!customerRepository.existsById(customerId)) {
+            throw new EntityNotExistException(EntityType.CUSTOMER, Constraint.ENTITY_NOT_EXISTS);
+        }
+
         //Converting the coupons list to a list of coupons Dto according the specific customer
         List<CouponDto> dtoCoupons = ObjectMappingUtil.
                 couponsToCouponsDto(couponRepository.
                         getCouponsByCustomersId(customerId));
 
-        //Checking if coupons are not exist
-        if (dtoCoupons.isEmpty()) {
-            throw new EntityNotExistException(EntityType.COUPON, Constraint.ENTITY_LIST_NOT_EXISTS);
-        }
+
         return dtoCoupons;
     }
 

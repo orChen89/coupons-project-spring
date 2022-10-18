@@ -43,9 +43,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     //Configuring which permissions are allowed to every User or section according to specific role
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.cors()
+                .and().authorizeRequests()
+                .anyRequest().permitAll();
+
+
          http.csrf().disable().
                  authorizeHttpRequests().
                  antMatchers("/auth/**").permitAll().
+                 antMatchers("/coupons/**").permitAll().
                  antMatchers("/admin/**").hasAnyAuthority("ADMIN_ROLE").
                  antMatchers("/company/**").hasAnyAuthority("COMPANY_ROLE", "ADMIN_ROLE").
                  antMatchers("/customer/**").hasAnyAuthority("CUSTOMER_ROLE", "ADMIN_ROLE").

@@ -44,6 +44,7 @@ public class ApplicationTest implements CommandLineRunner {
 
         boolean testException = false;
 
+
         try {
 
         testAdmin = adminTest.adminTest();
